@@ -1,0 +1,444 @@
+\documentclass[a4,twoside=off,draft=true]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[pdftitle={(IN)TELIDA Documentation},
+            pdfauthor={Timo Baumann},
+            linktocpage,
+           ]{hyperref}
+\usepackage{graphicx}
+\usepackage{tipa} % needed for \textpipe
+\usepackage{textcomp} % needed for \textlangle \textrangle
+
+\begin{document}
+
+%INcremental TImed LInguistic DAta
+\title{(IN)TELIDA Programmer's Manual}
+\subject{Inpro Technical Document 2009/03-893X3Ma2}
+\author{Inpro, Timo Baumann}
+\date{Version of \today}
+
+\maketitle
+\tableofcontents
+\clearpage
+
+\section{Introduction}
+
+We describe (IN)TELIDA, a library, toolkit, toolbox or what-you-name-it 
+to work with (\emph{in}cremental) \emph{t}im\emph{e}d \emph{li}nguistic \emph{da}ta.
+
+\subsection{Typographic Conventions}
+
+Method and variable names should be rendered like {\tt this}. 
+
+Method signatures are given like the following: 
+{\tt Util::min(\$a, \$b) :\ \$}, with the method name preceded by the module name,
+parameters given in parentheses ({\tt \$a} and {\tt \$b} in this case) and a return
+value after a colon. Perl is a loosely typed language and requires the programmer
+to think before they type, as most operations will still succeed (but with unexpected
+results) if preconditions are not met. The return types of functions are especially
+prone to this type of problem.
+Whenever possible we try to be as precise as possible about 
+the requested and returned values. For example, if a parameter should be a reference
+to a list, we write {\tt \textbackslash@list1} instead of just {\tt \$list1} and
+enumerate returned values in a list if their meaning is not obvious.
+
+\section{Data Structures}
+
+We handle timed data as discrete \emph{labels} which span a certain time and contain some 
+data.\footnote{
+ Note that it is hard to model gradual changes of continuous variables in this way. 
+}
+Labels which contain information of the same type (e.\,g.\ about what word was said at what time)
+are collected into a sequence of labels, which we call alignment. 
+An \emph{alignment} documents what we think (with regard to information of some kind) about a certain
+time span and maybe at a certain time. We capture what we think about the individual times
+using labels. Labels in an alignment must not overlap. 
+
+It is often desirable or even necessary to have collections of alignments which contain
+information of different types (words, phonemes, turns, \ldots) that all describe the same
+time span. For a given audio file we might be interested in knowing what turns were said
+and how the turns decompose into words and phonemes. If we have dual-channel audio with separate
+speakers on each channel, we may have different alignments for each speaker. And in a multi-modal
+setting we may have non-auditory information (such as mouse gestures, visual feedback, \ldots) 
+in separate alignments.
+The original format and annotation tool we used for this is Praat and its TextGrid format,
+so we call collections of alignments \emph{TextGrid}.
+
+TextGrids work fine for collections of timed data for the same time span but
+they are unsuitable to process and store incremental timed linguistic data (that is, data which
+becomes available at certain points in time and usually describes the alignment of labels
+up to this point in time -- or even up into the future). 
+A TextGrid is made to store aligned data of different types but all alignments are 
+describing (roughly) the same  time span.
+In contrast to this, an \emph{AlignmentSequence} contains multiple alignments of the same type
+which only differ with regard to the time they were created (or the time at which they were valid).
+An alignment sequence allows us to capture our thinking about what happens as time proceeds. 
+To capture our changes of opinion about what happens, we use \emph{EditMessages} that describe
+the differences between adjacent alignments.
+For an example of an alignment sequence and edit messages see Figure~\ref{fig:reco_example}.
+
+\begin{figure}
+\includegraphics[scale=1.0]{incremental_reco}
+% figure exported from incremental_reco.odg
+\caption{\label{fig:reco_example}An \emph{AlignmentSequence} showing \emph{live} ASR hypotheses during incremental recognition.
+Edit messages are shown on the right 
+when words are added ($\oplus$) or revoked ($\ominus$).
+For the word ``{\small\textsf{zwei}}'' two timing measures
+are shown at the bottom.}
+\end{figure}
+
+We may not always know about the right alignment or we may have multiple opinions about
+what alignment might be appropriate. This typically applies to speech recognition systems while
+they are processing. They follow a bunch of hypotheses about the alignment of words and only later 
+(as more information becomes available) decide on which alignment to pick. To capture this case, 
+we define an \emph{NBestList} to contain one or more alignments that record what we consider
+at a certain point in time. To study temporal aspects of n-best list changes,
+we use the \emph{NBestAlignmentSequence} which stores a consecutive collection of n-best lists.
+
+\section{Modules}
+
+\subsection{Timed Data}
+
+This subsection covers data structures and methods suitable for non-incremental timed data, which
+we cover from bottom (i.\,e.\ smaller structures) to top (i.\,e.\ larger containing structures).
+
+\subsubsection{Label.pm}
+
+Objects of the {\tt Label} class contain information of what happens in a given time span.
+Thus, they generally contain the properties {\tt xmin} and {\tt xmax} for the time span 
+and {\tt text} for the information contained. The optional property {\tt color} encodes
+the color of the label when displayed in TEDview.
+
+It must always hold that ${\tt xmin} \leq {\tt xmax}$
+and {\tt text} must not contain a newline character (\textbackslash{n}).
+
+Likely extension: Labels might become typed, that is might know that they can only contain information of 
+a certain kind (for example only matching the regexp {\tt /task\textpipe{}non-task\textpipe{}non-sys\textpipe{}/}).
+Also it would be nice if labels knew their predecessors and successors or could hold links to temporally
+related labels from other tiers (like words knowing their phonemes and vice-versa, or pronouns
+knowing their referents).
+
+Labels support the following operations:
+
+\begin{itemize}
+\item {\tt new(\$xmin, \$xmax, \$text) :\ \textbackslash{\%Label}} \\
+ Usually Labels are created for you automatically when you load a TextGrid or Alignment file. 
+ If you do need to create a label, then supply xmin, xmax and text as arguments.
+\item IO-functions to read labels from various formats and write them accordingly. 
+ If you need to call one, it's likely {\tt toWavesurferLine()} which does not 
+ take any arguments and returns the fields in a tab-separated line.
+\item {\tt isEmpty()} checks whether the label is blank
+\item {\tt isSilent()} checks whether the label is blank or contains only a silence marker
+\item {\tt equals(\$other, {\$mode})} \\
+ checks whether the label equals the other label. There are two modes
+ for equality: if \$mode is 'lax', only label texts must be identical, 
+ if \$mode is 'strict' (which is the default), then times are compared as well.
+\item {\tt duration() :\ \$} \\
+ returns the duration of the label (that is, the difference between xmax and xmin)
+\item {\tt durationInDots(\$dotDuration, \$mode) :\ \$} \\
+ returns a string representation that shows the duration of the label in dots. 
+ This is especially useful to signify the duration of pauses in text-only 
+ output ("Nimm das .... linke Teil."), or could again be used in text-only output 
+ to visualize the duration of any sequence of labels in alignment collections. 
+ The duration of a dot in seconds is given as first argument (a dot is returned for 
+ the start of every such interval). Again, there are two modes: if \$mode is 'log', 
+ then the duration of the labels is first logarithmized (actually,
+ $log(1 + duration)$) so that long labels do not become ridiculously dotty.
+\item {\tt getTimings(\$time)} \\
+ given a time, returns the absolute differences between this label's start-time and end-time 
+ and a relative position of the given time normalized by the word's duration
+\item {\tt timeShift(\$time)} \\
+ shifts the label start and end point by the time given as argument
+\item {\tt setColor(\$color)} \\ 
+ sets the color of the label that will be used when displaying/exporting to TEDview.
+ {\tt \$color} may contain arbitrary text but \emph{should} only contain color values
+ interpretable by TEDview, i.\,e.\ some named colors ({\tt white}, {\tt red}, \ldots) as
+ well as HTML color codes ({\tt \#123456}).
+\end{itemize}
+
+\subsubsection{Alignment.pm}
+An {\tt Alignment} object is a collection of {\tt Label} objects, represented as a list property.
+An object of this kind also contains the features {\tt xmin} and {\tt xmax}, which represent its time span. 
+These values can be set automatically with regard to the overall time spanned by the contained alignments or entered manually - in every case the boundaries {\tt xmin} and {\tt xmax} of each label have to be within the overall boundaries. 
+
+The following operations can be used concerning an {\tt Alignment} object:
+
+\begin{itemize}
+
+\item {\tt newEmptyAlignment() : \textbackslash{\%Alignment}} 
+\item {\tt checkLabels()} 
+\item {\tt clone(\$time)} 
+\item {\tt newAlignmentFromTextGridLines(\textbackslash@lines)} 
+\item {\tt toTextGridLines() : \textbackslash@lines } 
+\item {\tt newAlignmentFromWavesurferLines(\textbackslash@lines)} 
+\item {\tt newAlignmentFromWavesurferFile(\$filename)} 
+\item {\tt toWavesurferLines () : \textbackslash@lines } 
+\item {\tt saveToWavesurferFile(\$filename)} 
+\item {\tt newAlignmentFromSphinxLines (\\textbackslash@lines)} 
+\item {\tt toSphinxLines() : \textbackslash@lines} 
+\item {\tt toTEDXMLLines(\$time, \$orig, \$diamond) : \textbackslash@lines } 
+\item {\tt getName() : \$name} 
+\item {\tt setName(\$name)} 
+\item {\tt getLabels(\$time)} 
+\item {\tt setLabels(\$time)} 
+\item {\tt getTime() : \$time } 
+\item {\tt getLabelAt(\$time)}
+\item {\tt getWords(\$time)} 
+\item {\tt getWordsUpTo(\$time)} 
+\item {\tt getSpan(\$time)} 
+\item {\tt addLabel(\$time)} 
+\item {\tt integrateLabelsFromAlignment(\$alignment)} 
+\item {\tt isSilent(\$time)} checks whether 
+\item {\tt removeSilentLabels(\$time)} 
+\item {\tt removeEmptyLabels(\$time)} 
+\item {\tt crop(\$time)} 
+\item {\tt makeContinuous(\$time)} 
+\item {\tt diffInIUsUpTo (\$time)} 
+\item {\tt diffInIUs(\$time)} 
+\item {\tt copyUpTo (\$time)} 
+\item {\tt equalsUpTo t(\$time)}
+\item {\tt prefixUpTo (\$time)} 
+\item {\tt collapse(\$time)} 
+\item {\tt getTalkSpurts(\$time)} 
+
+\end{itemize}
+%new, consistency checking,
+%clone, equals,
+%TextGridIO, WavesurferIO, SphinxIO,
+%simple getters, setters
+
+\subsubsection{TextGrid.pm}
+% generelle Dinge - woraus besteht ein TextGrid
+{\tt TextGrid} objects are collections of {\tt Alignments}, represented as a list property. 
+An object of this kind also contains the features {\tt xmin} and {\tt xmax}, which represent its time span. 
+These values can be set automatically with regard to the overall time spanned by the contained alignments or entered manually - in every case, the boundaries {\tt xmin} and {\tt xmax} of each of the alignments have to be within the overall boundaries. 
+
+% Liste von Funktionen
+The following operations can be used concerning a {\tt TextGrid} object: 
+
+\begin{itemize}
+\item {\tt new(\$xmin, \$xmax, \$alignments, \$format, \$name)} creates a new {\tt TextGrid} object. 
+{\tt \$xmin} and {\tt \$xmax} mark its start-time resp.\ end-time. 
+If {\tt \$format} is set to 'lax', these values will be calculated and set automatically. 
+{\tt \$alignments} is a reference to a list of alignments. {\tt \$name} will be the internal name for that object.
+The operation returns a {\tt TextGrid} object. 
+Generally, it should be preferred to use one of {\tt newTextGridFromFile()} or {\tt newEmptyTextGrid()}.
+
+\item {\tt checkAlignments(\$alignments)} checks, 
+whether all alignments in the list are correct, i.\,e.\ actual alignments by definition. 
+Further, the overall upper and lower time boundaries of the alignment list are calculated. 
+The operation returns these two overall time boundaries. If no alignments have been found at all, (0,0) is returned.  
+
+\item {\tt newTextGridFromLines(\textbackslash@lines)} creates a new {\tt TextGrid} object 
+from given text data ({\tt \textbackslash@lines} as an array of lines) syntactically forming a TextGrid.
+
+{\bf Notice} that only latin-1 encoded TextGrids in the regular text-format (not "short text") are supported. 
+Newer versions of Praat often output utf-16 (big endian) encoded TextGrid files, especially if they contain Umlauts.
+These have to be converted (e.\,g.\ using the UNIX ``iconv'' or ``recode'' commands) to latin-1. 
+TextGrids are automatically read and written as latin-1, regardless of your environment. Thus, there is no need
+to recode TextGrids between using Praat and TELIDA.
+
+The operation returns a call of the {\tt new}-operator and therefore a {\tt TextGrid} object. 
+  
+\item {\tt newTextGridFromFile(\$filename)} creates a new {\tt TextGrid} object 
+from a given file {\tt \$filename}, whose content has to syntactically form a TextGrid. 
+The operation returns a {\tt TextGrid} object.
+
+
+\item {\tt newEmptyTextGrid()} creates a new {\tt TextGrid} object without assigning values to its components. 
+The operation returns a call of the {\tt new}-operator and therefore a {\tt TextGrid} object.
+
+%%%%% TODO %%%%%%
+\item {\tt newTextGridFromS1HFile(\$lines)}
+%%%%%%%%%%%%%%%%%
+
+
+\item {\tt toTextGridLines()} creates writable TextGrid data from a {\tt TextGrid} object. 
+It is asserted, that each alignment has the same time boundaries as the TextGrid itself. 
+The operation returns an array of lines representing the TextGrid. 
+
+\item {\tt toTEDXMLLines(\$lines, \$nowrap)} creates writable XML data for TEDview from a {\tt TextGrid} object. 
+If {\tt \$nowrap} is set to 'nowrap', the top-level 'dialogue' tag is
+omitted. 
+As TextGrid is a non-incremental format, no enclosing 'diamond' events are generated for
+the enclosed tracks.
+The originator attribute is passed on to the label.
+The operation returns an array of lines representing the TEDXML data. 
+
+\item {\tt toTED(\$ip, \$port)} sends a {\tt TextGrid} object 
+to the TEDview application via port {\tt \$port} and IP address {\tt \$ip}. 
+These features have default values (port 2000 and IP 127.0.0.1) and are therefore optional.  
+
+\item {\tt saveToTextGridFile(\$filename)} saves the {\tt TextGrid} object to a file {\tt \$filename}.
+
+\item {\tt getAlignmentNames()} creates a list of all alignment names (i.\,e.\ tier names) found in the {\tt TextGrid} object. 
+The operation returns an array of alignment names.
+
+\item {\tt getAlignmentsByName(\$name)} gets all alignments that match a given string {\tt \$name}. 
+The operation returns an array of alignment names.
+
+\item {\tt getAlignmentByName(\$name)} gets the first alignment name that matches a given string  {\tt \$name}. 
+The operation returns the first alignment name in the list of matching names. If no match could be found, this value is empty. 
+
+\item {\tt hasAlignment(\$name)} checks whether a {\tt TextGrid} object has an alignment with the name {\tt \$name}. 
+The operation returns true (1) or false (0).   
+
+\item {\tt addAlignment(\$alignment)} adds the alignment {\tt \$alignment} to a TextGrid object. Duplicate names in the alignment list are not allowed. 
+
+\item {\tt addAlignmentAfter(\$newAlignment, \$name) } adds the alignment {\tt \$newAlignment} to a TextGrid object. It will be inserted after the alignment with the name {\tt \$name}.
+ 
+\item {\tt removeAlignmentByName(\$name)} removes the alignment with the name  {\tt \$name} from the list of alignments. 
+
+\item {\tt replaceAlignmentByName(\$name, \$newAlignment )} replaces the alignment with the name {\tt \$name} with the alignment {\tt \$newAlignment}. 
+
+\end{itemize}
+
+
+\subsection{Incremental Timed Data}
+
+This subsection covers data structures and methods suitable for incremental timed data. 
+Obviously, an understanding for the processing of non-incremental timed data (as discussed in the
+previous subsection) is vital also for the processing of incremental timed data.
+
+We do not cover collections of data of different types as we have for non-incremental timed data.
+Instead we limit ourselves to the generalization of alignment-information to the incremental case
+and to the case where multiple hypotheses about alignments are considered at the same time and 
+incrementally as time proceeds.
+
+\subsubsection{SingularAlignmentSequence.pm}
+
+A SingularAlignmentSequence contains many alignments (each with a {\tt time}) 
+which record what we think at a given point in time.
+
+\subsubsection{NBestList.pm}
+
+An NBestList contains several alignments which we all believe in at a certain 
+point in time (not different points in time as for SingularAlignmentSequences, 
+see above), ranked by the strength of our belief.
+
+\subsubsection{NBestAlignmentSequence.pm}
+
+An NBestAlignmentSequence contains many NBestLists, representing the change of 
+our (complex) belief states over time.
+
+\subsubsection{IUEdit.pm}
+
+\subsection{Util.pm}
+
+The {\tt Util} module bundles together some (partially trivial) functions that
+are used in several parts of the code and could be of use to other scripts. They 
+are only vaguely related to the processing of timed data.
+
+\begin{itemize}
+\item {\tt Util::min(\$a, \$b) :\ \$} and {\tt Util::max(\$a, \$b) :\ \$}\\
+ return the (arithmetically) smaller or larger of the given values
+\item {\tt Util::minList(@list) :\ \$}\\
+ returns the (arithmetically) smallest value in the given list
+\item {\tt Util::parseLine(\$line, \$re) :\ \$}\\
+ is internally used for TextGrid parsing. Can also be used more generally
+ to match a line of text to the given regular expression and returns 
+ the first parenthesized part of the regexp ({\tt \$1}) if it exists.
+\item {\tt Util::tokenize(\$line) :\ @}\\
+ splits a given line of text into word tokens and returns a list of these word tokens. 
+\item {\tt Util::levenshtein(\textbackslash@list1, \textbackslash@list2) :\ \$}\\
+ return the levenshtein distance between two lists
+\item {\tt Util::runCached(\$question, \$processor, \$command) :\ @ / \$}\\
+ return the lines of standard output the external command {\tt \$command} will produce 
+ when faced with the standard input {\tt \$question}. The method returns either a list
+ of lines or a scalar containing all the lines delimited by new lines (\textbackslash{n})
+ depending on the caller's preference.
+
+ As the method name implies, the command is not necessarily being run, but
+ the result may also be the cached version of a previous call to the external command.
+ Cached results are stored in a file system cache (located in the directory {\tt runCache/} 
+ relative to the calling script). Within the cache, files are further sub-divided by the
+ name given in {\tt \$processor}. 
+
+ WARNING: As results are cached for future use, it is important to use this method only if
+ calls to the external command are known to produce identical output when called
+ repeatedly with identical input.
+ For example, using it to cache complex parsing calculations that do not change between runs
+ is advisable. Running it to cache calls to {\tt date} or worse {\tt head /dev/random} may 
+ not return what you expect.
+\end{itemize}
+
+\section{File Types}
+
+% TODO: document the supported file types
+% TextGrid and and Wavesurfer-Labelfile formats can be covered quickly 
+% mostly we have to outline what they do and talk about our limitations in TextGrid support
+% then talk about our own formats for NBestLists, plain incremental data and
+% nbest-incremental data.
+
+NBest lists and especially NBestAlignmentSequences can become rather large and reading
+them from a file then becomes slow. For this reason NBestAlignmentSequence::newNBestSeqFromFile()
+automatically writes gzipped Perl Storable files (.pls.gz) for each file accessed and will 
+use these files to serve later calls. This improves performance by quite a bit.
+
+% finally we should write or link to a TEDviewXML documentation
+
+
+\section{CLI Applications}
+
+Some of the modules' functionality is available in two command-line applications, one
+for non-incremental data and another for incremental data. Focus is on opening files, 
+showing contents and manipulating data. 
+
+\subsection{TGtool.pl}
+
+Reads, writes and manipulates TextGrids and Alignments. Alignments can be edited in an 
+external editor and visualized in an open TEDview instance.
+
+TGtool supports the following commands:
+
+\begin{description}
+  \item[help] provides help on commands.\\ \emph{USE THIS FOR MOST UP-TO-DATE INFORMATION!}
+  \item[exit] exits the program.
+  \item[] % quasi new-line
+  \item[ls] list the working directory
+  \item[cd] change the working directory
+  \item[pwd] print the working directory
+  \item[] % quasi new-line
+  \item[new] create a new and empty TextGrid
+  \item[load \textlangle filename\textrangle] load a file
+  \item[{save [[\textlangle tier\textrangle] \textlangle filename\textrangle]}] 
+        if tier is given, write the tier to file, if no tier
+        is given, write textgrid to file, if no filename is given, write to the filename
+        last opened
+  \item[] % quasi new-line
+  \item[{show [\textlangle tiername\textrangle]}] 
+        list the given tier or list the tier names if no tiername is given
+  \item[part \textlangle tiername\textrangle] \textlangle start\textrangle] \textlangle end\textrangle]]
+        list the part of the given tiername from start-time to end-time
+  \item[] % quasi new-line
+  \item[{add \textlangle filename\textrangle [\textlangle name\textrangle [\textlangle prev\textrangle]]}]
+        open a WS tier from filename, call it name and add it to the
+        current textgrid after the last tier which matches prev
+  \item[rm \textlangle tiername\textrangle] remove the tier from the textgrid
+  \item[repl \textlangle tiername\textrangle \textlangle filename\textrangle]
+        replace the tier with the alignment read from filename
+  \item[] % quasi new-line
+  \item[edit \textlangle tiername\textrangle] edit the tier in nedit; when you're done editing,
+        save the result and close nedit; the tier will be updated.
+  \item[{grep \textlangle regexp\textrangle [\textlangle tiername\textrangle \ldots}]
+        search all or specific tiers for labeltext matching the regexp
+  \item[] % quasi new-line
+  \item[TEDview \textlangle port\textrangle] 
+        show TextGrid in TEDview (port defaults to 2000, TEDview's default port)
+  \item[{mark [\textlangle tiername\textrangle] 
+              [\textlangle start\textrangle \textlangle end\textrangle] 
+              \textlangle color\textrangle}]
+        mark the labels in the given or all tiers between start and end (or all of times are omitted)
+        in the given color; TEDview will now display the corresponding labels in the given color
+\end{description}
+
+\subsection{INtool.pl}
+
+Reads and manipulates AlignmentSequences. Sequences can be visualized with the help of
+TEDview, a viewer for incremental timed data.
+
+\subsection{TGgrep.pl}
+
+Search in TextGrids (or other formats) using regular expressions for the labels and
+(if you want) the tracks.
+
+\end{document}

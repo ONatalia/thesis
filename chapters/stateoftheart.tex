@@ -1,0 +1,46 @@
+\chapter {Related Work}
+\label{ch:relatedWork}
+The architecture of  contemporary speech recognition systems includes basic ASR
+components: acoustic input, acoustic model, language model and decoder.
+ASR decoder gets as input feature vectors of audio signal and the results
+of acoustic and language modelling and produces a decoded word and
+phone alignment as an output \parencite {jurafskymartin2009}.
+
+Most traditional ASRs, including commercial, are not incremental. They produce
+the output result after the utterance is finished, resulting in a delay up to
+750-1500 ms. In additional they may use multiple-pass decoding, which is not
+possible incrementally \parencite {skantzeschlangen2009}.
+Incremental dialogue processing allows reducing of feedback time, bringing the
+dialogues in interactive environments closer to natural ones.
+Apart from abstract models of incremental dialogue processing there exist an
+implementation  of a limited micro-domain system, recognising sequence
+numbers \parencite {skantzeschlangen2009}.
+
+A good example of  traditional ASR architecture is the implementation of the
+open-source CMU Sphinx-4 recogniser \parencite {Lamereetal2013:Eurospeech}.
+Sphinx-4 was not designed as an incremental system, but its modular design 
+allows extension and adding new components, required for an incremental speech recogniser. 
+\parencite {baumannetal2009:naacl}.
+
+Apart from Sphinx-4 the leading speech recognition systems is commercial
+Google Voice Search \parencite{schalkwyk2010}.
+
+State-of-art Google Search by Voice, trained using huge amounts of audio data,
+presents the best results in the terms of accuracy for a
+standard non-incremental task. However, when intermediate results are produced
+synchronously in an incremental mode we see a trade-off between stability of the
+input and latency \parencite {mcgrawgrauenstein2012}. 
+
+Further restriction of Google is its task-orientated recognition, primarily 
+aimed to interactive Google command search. This generally means that simple
+transfer of Google technology to domain-specific natural dialogue systems and
+context-specific HRI environments leads to lower accuracy. 
+
+Recently, there has been proposed a solution for a domain-dependent
+applications, using a combination of Google phonetic post processing and
+Sphinx-4. Original frontend of Sphinx-4 is replaced by phoneme frontend, which
+converts the Google result to its phonetic representation. Test
+results of the combined approach have shown a significant improvement of
+recognition results for non-incremental tasks.
+Combination technique is considered to be transferable to the
+incremental problem solution \parencite {twiefeletal2014}.
