@@ -166,13 +166,14 @@
     fontadjust
   } 
 % \bibliography{bibliography/literatur}  
- \bibliography{bibliography/literatur.bib}     
+ \bibliography{bibliography/literatur.bib} 
+ \let\cleardoublepage\clearpage    
 \begin {document}
+%\renewcommand\thechapter{\arabic{chapters}}
+%\renewcommand\thesection{\arabic{section}}
 \input{chapters/titelseite}  
 \pagenumbering {roman}
-\begin{appendix}
 \input{chapters/abstract}
-\end{appendix}
 \input{chapters/dedication}
 \input{chapters/declaration} 
 \input{chapters/acknowledgements}
@@ -189,7 +190,7 @@
 \input{chapters/conclusion}
 \begin{appendix}
 \input{chapters/appA}
-\end{appendix}
+ \end{appendix}
 \newpage
 \phantomsection % ben�tigt f�r korrekte pdf-darstellung
 \addcontentsline{toc}{chapter}{References}
