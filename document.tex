@@ -80,6 +80,7 @@
 	
 	% schrift auf palatino umstellen
   \usepackage{palatino}
+  \usepackage{tipa}
 %  \setkomafont{sectioning}{\normalcolor\bfseries}
 
 
@@ -174,9 +175,9 @@
 \input{chapters/titelseite}  
 \pagenumbering {roman}
 \input{chapters/abstract}
-\input{chapters/dedication}
-\input{chapters/declaration} 
-\input{chapters/acknowledgements}
+%\input{chapters/dedication}
+
+%\input{chapters/acknowledgements}
 \tableofcontents
 \listoffigures
 \listoftables
@@ -195,6 +196,6 @@
 \phantomsection % ben�tigt f�r korrekte pdf-darstellung
 \addcontentsline{toc}{chapter}{References}
 \printbibliography 
-
+\input{chapters/declaration} 
 \end{document}
 %

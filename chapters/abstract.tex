@@ -1,19 +1,35 @@
 \chapter*{Abstract}
 In recent years, Automatic Speech Recognition (ASR) systems have improved
-increasingly, being used in everyday applications: Siri, Google ASR However,
-often such systems work asynchronously in respect to output, computing the
-result after the utterance is already finished.
-In the area of Human-Machine Interaction, 
-where intermediate system reactions of ASRs are 
-desirable,  incremental output of the intermediate results becomes increasingly
-important. Benefits of  incremental speech recognition include post-processing
-time savings, faster system feedback and more natural dialogue between humans
-and intelligent systems. Commercial Google recognition
-engine, working in incremental mode, produces accurate
-results in non-specific domains, but demonstrates higher latency
-Non-commercial open source systems, like Sphinx-4, on the other hand, demonstrate very short delays and can be timed to specific
-applications, but are less reliable in accuracy.
-The challenge is to combine the advantages of both systems and  to overcome the latency problem of Google-ASR.
+increasingly. However, often such systems work non-incrementally, producing 
+the end result after the utterance is already finished. For applications, where intermediate system reactions of ASRs are desirable,  
+incremental output of the intermediate results becomes increasingly important. Benefits of  incremental speech recognition 
+include post-processing time savings, faster system feedback and more natural dialogue between humans and intelligent systems. 
+Commercial Google recognition engine, able to run in incremental mode, produces accurate results in non-specific domains,
+ but demonstrates higher latency. In addition Google results provide no  timing information for the words, occurring in  the recognized sentences. 
+ Forced alignment, absent in Google, is of great importance for dialogue systems, involving non-verbal recognition.  
+Non-commercial open source Sphinx-4 system, on the other hand, demonstrates very short delays and can be timed to specific applications, but is 
+less reliable in accuracy. This master thesis investigates the possibilities of Google+Sphinx combination within the frames of Incremental Spoken Dialogue 
+Processing Toolkit (InproTK). The central part of the the proposed architecture is a Incremental Unit (IU) module, which guarantees that Google incremental 
+results are passed to Sphinx recognizer, working in a forced-alignment mode. Google+Sphinx alignment results as well as the results of Google and Sphinx 
+alone are to be evaluated against the gold standard. Furthermore, we propose approaches,allowing combination of alignment and recognition within  Google+Sphinx 
+architecture. The main focus of the analyses is the Sphinx-4 SearchGraph path alternations strategies. 
+Finally, we discuss the problems of timeliness results evaluation.
+
+% In recent years, Automatic Speech Recognition (ASR) systems have improved
+% increasingly, being used in everyday applications: Siri, Google ASR However,
+% often such systems work asynchronously in respect to output, computing the
+% result after the utterance is already finished.
+% In the area of Human-Machine Interaction, 
+% where intermediate system reactions of ASRs are 
+% desirable,  incremental output of the intermediate results becomes increasingly
+% important. Benefits of  incremental speech recognition include post-processing
+% time savings, faster system feedback and more natural dialogue between humans
+% and intelligent systems. Commercial Google recognition
+% engine, working in incremental mode, produces accurate
+% results in non-specific domains, but demonstrates higher latency
+% Non-commercial open source systems, like Sphinx-4, on the other hand, demonstrate very short delays and can be timed to specific
+% applications, but are less reliable in accuracy.
+% The challenge is to combine the advantages of both systems and  to overcome the latency problem of Google-ASR.
 % \section {Problem Statement}
 % The aim of this master thesis is to investigate the possibility of
 % timeliness and timing improvement of Google ASR

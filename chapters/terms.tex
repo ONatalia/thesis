@@ -5,7 +5,7 @@ One of the central algorithm  of the modern ASRs is token passing
 algorithm. Recognition is the process of producing hypotheses, that fit best
 with the audio input. During decoding these hypotheses are
 saved as a list of tokens, which contains information about alignment, states
-and transitions. \parencite {jurafskymartin2009}.
+and transitions. \parencite {Young89Token}.
 
 \begin{figure}[htbp]
   \centering
@@ -33,20 +33,23 @@ is computed synchronously together with search states. Final path can differ
 from ``gold standard'' transcription, depending on the recognition quality. The
 more further recognizer in their hypotheses from the original transcription the
 worse recognition quality. Comparison between two sphinx outputs
-(see pictures \ref {fig:sphinx} and \ref {fig:sphinxfa}) make it obvious that
+(see pictures \ref {fig:sphinx} and \ref {fig:sphinxfa}) makes it obvious that
 alignment quality depends on recognition quality.
 \begin{figure}[htbp]  
   \centering
    \includegraphics[width=0.9\textwidth]{images/sphinx_output.png}
-  \caption{incremental output of Sphinx ASR, running normal recognition mode
-  mode}
+  \caption{incremental output of Sphinx ASR, running in normal recognition}
   \label{fig:sphinx}
 \end{figure}
+
 Forced-alignment is of great importance in fast-moving environments, where
-additional non-verbal information, for example gestures, is used.  Without
+additional non-verbal information, for example gestures, are used.  Without
 timing information in such kind of applications it not always possible to
 analyse correctly which object is referenced 
-\parencite {Baumann2016}. 
+\parencite {Baumann2016}.  In contrast to Sphinx, being, a black box, online
+Google does not output alignment timing, which makes it impossible to use this 
+recognizer for applications, using non-verbal information and context-dependent
+object referencing. 
 
 \section {Timeliness in Speech Recognition} 
 Timeliness is the second term that is used to characterize word
