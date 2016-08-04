@@ -51,6 +51,122 @@ Google does not output alignment timing, which makes it impossible to use this
 recognizer for applications, using non-verbal information and context-dependent
 object referencing. 
 
+\section {Alignment quality metrics}
+Alignment quality metrics describe how good is the timing of the output,
+produced by the recognizer, compared with the gold standard. The main
+metrics that can be used for this purpose are: \textit {mean error}, \textit {standard deviation} and 
+and \textit {root mean squared error}. In this paper we
+differentiate between incremental and non-incremental approach to the
+calculation of the errors.  For non-incremental approach only the
+final timing result of the recognizer are compared with the gold standard. By
+contrast, incremental approach requires to compare incremental timing results with gold
+standards.  How exactly the errors are computed is explained in details in
+the subsections below. 
+\subsection {Mean error} \textit {Mean error}  $\mu$ reformulated in
+accordance with the timing problem can be expressed as follows:
+\begin{center} 
+\begin{equation} \mu=\frac{\sum_{i=0}^N
+|t_{i_{start}(rec)}-t_{i_{start}(gold)}+t_{i_{end}(rec)}-t_{i_{end}(gold)}|}{N}
+\label{eq:mean}
+\end{equation}
+\end{center} In the formula  \ref {eq:mean}, shown above, 
+$t_{i_{start}(rec)}$ and $t_{i_{end}(rec)}$ equals start and end of the
+matched or substituted word in recognizer output,
+$t_{i_{start}(gold)}$ and $t_{i_{end}(gold)}$ equals start and end of
+corresponding word in the gold standard and N is the total number if matches and substitutions.
+
+In the case of the forced-alignment of the phrase, that is equal with the transcription, the total number of matches and substitutions is 
+equals the number of words (compare \ref{fig:sphinx}). When ASR runs in normal
+recognition mode the number of matches and substitutions can differ from the number of words
+as we are possibly  dealing with some deletions or insertions. Matches and
+substitutions are relatively easily obtained from the 
+Levenshtein distance matrix, containing substitutions, matches, deletions and
+insertions of characters, occurring in two strings \parencite {levenshtein1966}.  
+
+For the above example (figure \ref{fig:sphinx}) the mean  error, related to
+the final result ``Ich danke ihnen und wir sehen uns dann'', is computed as
+follows:
+\begin{equation} \mu=\frac{0+100ms+50 ms+150ms+0
+ms+0 ms+0 ms+200ms)}{8} \approx 50 ms
+\label{eq:mean_comp}
+\end{equation}
+
+For incremental approach it is necessary first to calculate mean error of the
+incremental results for every word, belonging to the final matches or
+substitutions. In addition, we have to consider only incremental results with
+changing timings. As soon as the result is stable it is not any more significant
+for the analysis of timing incrementality. The reason is that the words in the
+beginning of the utterance appear ofter in the hypotheses and will minimize their error with
+every new hypotheses, if the mean error is founded over all of them.  
+
+In the example above (figure \ref{fig:sphinx}) the word ``ich''  appears 18
+times in the output, but only first 4 outputs are relevant for incremental timing
+analyses.  Starting from the 5 incremental result the timing for the ``ich''does
+not change any more.  The mean error of the word ``ich" for the first 4
+incremental results equals $\frac {400+200+50+0}{4}\approx 163 ms$, whereas for 18 incremental results 
+it equals only $\frac {400+200+50+0*15}{18}=\approx 36 ms$. 
+
+The mean error for all words in incremental case in the above example (figure
+\ref{fig:sphinx}) is the following:
+
+\begin{equation} \mu=\frac{(163 ms +200ms +240 ms+233 ms+225ms+67
+ms+83 ms+250 ms)}{8} \approx 183 ms
+\label{eq:mean_comp_inc}
+\end{equation}
+
+
+
+
+
+\subsection {Standard deviation}
+\textit {Standard deviation} is the square root of its variance
+:\begin{equation} \sigma=\sqrt {Var}
+\end{equation}
+\textit {Variance} $Var(X)$ in its turn is the average of the squared
+differences from the Mean:
+\begin{equation} Var(X)=\frac{\sum_{i=0}^N (t_i(rec)-\mu)2}{N}
+\end{equation}
+In the above formula $t_i(rec)$ is the actual recognizer timing and N is again
+is the number of matches and substitutions.  Standard deviation in the Sphinx
+example (\ref{fig:sphinx}) with non-incremental approach is calculated as shown
+below:
+\begin{equation} \sigma=\sqrt {\frac
+{2500+2500+0+10000+2500+2500+2500+22500}{8}}\approx 75 ms
+\end{equation}
+
+For incremental case $\sigma$ is first computed for every word in the utterance
+as the average of the squared differences of all relevant incremental results from
+the mean (\ref{eq:mean_comp_inc}). For the word ``ich'' in the above example (\ref{fig:sphinx}) it equals:
+\begin{equation} \sigma=\sqrt {\frac
+{(400-183)^2+(200-183)^2+(50-183)+(0-183)^2}{4}}\approx 157 ms
+\end{equation}
+
+Finally, the $\sigma$ for all words is computed as an average of the sigmas of
+all the words in the utterance:
+\begin{equation} \sigma_incr=\frac
+{(157 ms+101 ms + 201 ms+138 ms+342 ms+ 84ms +79ms +168 ms}{8}\approx 159
+ms
+\end{equation}
+
+
+\subsection {Root Mean Squared Error}
+\textit {Root mean squared error} (RMSE) is the square root of  \textit {mean
+error}  and \textit {standard deviation} \begin{equation} (RMSE)=\sqrt
+{\mu^2+\sigma^2}. 
+\end{equation}
+For the Sphinx example above  (\ref{fig:sphinx}) in  non-incremental case it
+equals:
+\begin{equation} (RMSE)=\sqrt
+{50^2+75^2} \approx 90 ms. 
+\end{equation}
+
+In the incremental case the result equals:
+\begin{equation} (RMSE)=\sqrt
+{183^2+159^2} \approx 242 ms. 
+\end{equation}
+
+
+
 \section {Timeliness in Speech Recognition} 
 Timeliness is the second term that is used to characterize word
 occurrences during recognition in relation to the time axis. 
@@ -70,6 +186,8 @@ In the above depicted output of Sphinx ASR  (see pictures \ref {fig:sphinxfa}
 and \ref {fig:sphinx}) FO as well as FD of the word ``ich''  in the first case (forced-alignment mode)
 takes plays a half of the slot earlier than in the second case (normal
 recognition) and before the word ``ich'' ends in audio. 
+
+ 
 
 
 

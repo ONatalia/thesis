@@ -1,20 +1,20 @@
 [0] Config.pm:324> INFO - This is Biber 2.1
-[0] Config.pm:327> INFO - Logfile is 'document.blg'
-[45] biber-darwin:276> INFO - === Mon Aug  1, 2016, 11:14:23
-[46] Biber.pm:333> INFO - Reading 'document.bcf'
-[137] Biber.pm:645> INFO - Found 11 citekeys in bib section 0
-[154] Biber.pm:2977> INFO - Processing section 0
-[170] Biber.pm:3115> INFO - Looking for bibtex format file 'bibliography/literatur.bib' for section 0
-[173] bibtex.pm:1021> INFO - Decoding LaTeX character macros into UTF-8
-[175] bibtex.pm:895> INFO - Found BibTeX data source 'bibliography/literatur.bib'
-[194] Utils.pm:146> WARN - BibTeX subsystem: warning: comma(s) at end of name (removing)
-[194] Utils.pm:146> WARN - BibTeX subsystem: author, warning: comma(s) at end of name (removing)
-[195] Utils.pm:146> WARN - I didn't find a database entry for crossref 'DBLP:conf/aaai/2014' in entry 'twiefeletal2014' - ignoring (section 0)
-[196] Utils.pm:146> WARN - The field 'institution' in entry 'Ravishankar96efficientalgorithms' cannot be null, deleting it
-[322] UCollate.pm:66> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[322] UCollate.pm:66> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[323] Biber.pm:2854> INFO - Sorting list 'nyt' of type 'entry' with scheme 'nyt' and locale 'en-US'
-[323] Biber.pm:2858> INFO - No sort tailoring available for locale 'en-US'
-[343] bbl.pm:505> INFO - Writing 'document.bbl' with encoding 'UTF-8'
-[344] bbl.pm:596> INFO - Output to document.bbl
-[345] Biber.pm:106> INFO - WARNINGS: 4
+[1] Config.pm:327> INFO - Logfile is 'document.blg'
+[41] biber-darwin:276> INFO - === Tue Aug  2, 2016, 13:44:45
+[41] Biber.pm:333> INFO - Reading 'document.bcf'
+[141] Biber.pm:645> INFO - Found 12 citekeys in bib section 0
+[167] Biber.pm:2977> INFO - Processing section 0
+[184] Biber.pm:3115> INFO - Looking for bibtex format file 'bibliography/literatur.bib' for section 0
+[187] bibtex.pm:1021> INFO - Decoding LaTeX character macros into UTF-8
+[190] bibtex.pm:895> INFO - Found BibTeX data source 'bibliography/literatur.bib'
+[210] Utils.pm:146> WARN - BibTeX subsystem: warning: comma(s) at end of name (removing)
+[210] Utils.pm:146> WARN - BibTeX subsystem: author, warning: comma(s) at end of name (removing)
+[211] Utils.pm:146> WARN - I didn't find a database entry for crossref 'DBLP:conf/aaai/2014' in entry 'twiefeletal2014' - ignoring (section 0)
+[212] Utils.pm:146> WARN - The field 'institution' in entry 'Ravishankar96efficientalgorithms' cannot be null, deleting it
+[352] UCollate.pm:66> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[352] UCollate.pm:66> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[352] Biber.pm:2854> INFO - Sorting list 'nyt' of type 'entry' with scheme 'nyt' and locale 'en-US'
+[353] Biber.pm:2858> INFO - No sort tailoring available for locale 'en-US'
+[375] bbl.pm:505> INFO - Writing 'document.bbl' with encoding 'UTF-8'
+[376] bbl.pm:596> INFO - Output to document.bbl
+[376] Biber.pm:106> INFO - WARNINGS: 4

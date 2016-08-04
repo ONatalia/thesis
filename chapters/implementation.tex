@@ -3,26 +3,38 @@
 \section {Development environment overview}
 Incremental recogniser is implemented in Java programming language, using
 an open-source project \textit {Incremental Spoken Dialogue processing
-Toolkit}(InproTK), developed by the Universities of Potsdam, Bielefeld and
+Toolkit} (InproTK), developed by the Universities of Potsdam, Bielefeld and
 Hamburg. InproTK includes modules for speech recognition, speech understanding,
-speech processing and dialogue management.
-Speech recognition module is based on implemented Java Sphinx-4 recogniser, a
-package of CMUSphinx speech recognition toolkit. 
+speech processing and dialogue management.Speech recognition module is based on implemented Java Sphinx-4 recogniser, 
+a package of CMUSphinx speech recognition toolkit. 
 \section {IU Modules and Data Processing}
-\textit {Incremental Units} (IU) are minimal data processing unit in InptoTK.
-They are interconnected with each, forming a network of IUs \parencite
-{baumann2013:phd}.
-
+\textit {Incremental Units} (IUs) are minimal information units in InptoTK.
+IUs are different in the level abstraction (from low to high) and capable of
+describing different types of information (phonemes, words, phrases, ...). IUs
+of different abstraction levels form a IU network. An example of IU hierarchy is
+shown in the figure.
+\begin{figure}[htbp]
+  \centering
+    \includegraphics[width=1.0\textwidth]{images/IUs.png}
+ \caption{ An excerpt of INproTk built-in type hierarchy \parencite
+ {baumann2013:phd}}
+  \label{fig:IUs}
+\end {figure}
+Processing of IUs is guarantied by IU modules. IU
+modules consist of left buffer, right buffer and processors.  INproTK Different IUs
+modules are interconnected with each other, forming a pipeline of IU modules \parencite {baumann2013:phd}. A typical
+communication between two IU modules is shown in the figure \ref{fig:IUs}.
 \begin{figure}[htbp]
   \centering
     \includegraphics[width=1.0\textwidth]{images/iuandbuffer.png}
- \caption{ Incremental Units (IUs) and their intercommunication via left-right
+ \caption{ Incremental Modules and their intercommunication via left-right
  buffers \parencite {baumann2013:phd}}
-  \label{fig:Bild1}
+  \label{fig:IUs}
 \end {figure}
-\subsection {GoogleASR Module in InproTK}
-GoogleASR is a source IU in InproTK, which listens to results coming from
-Google's  downstream connection in JavaScript Object Notation (JSON) format and
+\section {INproTK IU Modules in Recognizer Architecture}
+\subsection  {Google IU Module}
+GoogleASR is a source IU module in InproTK, which listens to the
+results coming from Google's  downstream connection in JavaScript Object Notation (JSON) format and
 passes results to its listeners by updating the current hypotheses and providing
 info about the hypotheses time (hypotheses start and end times).
  \begin{figure}[htbp]
@@ -38,24 +50,31 @@ timeliness: FO as well as FD.  Manual reconstruction of alignment from
 timeliness is problematic as timeliness does not preserve any information about word
 duration. 
 
-
-For example, in the picture  \ref {fig:google_ouput} the first hypotheses (word ``ich) equals 0
-and end times equals about 7.5 time slots, whereas the borders of the word
+For example, in the figure  \ref {fig:google_ouput} the first hypotheses (word
+``ich) equals 0 and end times equals about 7.5 time slots, whereas the borders of the word
 ``ich'' are between 1 and 3.5 time slot. In addition, in case of Google we are dealing with additional output delay,
 resulted from network latency, which can be slightly variable approximately
-between 50 and 200 ms. Google has processed the file till the end of the word
-``ich'' by the time 3.5, after some internal Google offset, the output was made.
+between 10 and 200 ms depending on the network configuration. Google has
+processed the file till the end of the word ``ich'' by the time 3.5, after some internal Google offset, the output was made.
 It is assumed, that Google offset reflects the problem of stability of the
 the output and latency \parencite {mcgrawgrauenstein2012}. Finally, Google ASR returned this result after 
 network delay.  
  \begin{figure}[htbp]
   \centering
-   \includegraphics[width=1\textwidth]{images/json.png}
+   \includegraphics[width=1\textwidth]{images/json_extr.png}
     \caption{JSON file example}
       \label{fig:json_ouput}
 \end{figure}
-\subsection {SphinxASR Module}
-\section {Architecture of the Implemented combined Google-Sphinx Recognizer}
+\subsection {Sphinx ASR Module and Label Writer in INproTK}
+Sphinx ASR in INproTk is IU module that receives results from Sphinx-4
+recognizer, transforms them to IUs of recognized words and sends them
+to Label writer IU via left-right buffer configuration.   Label writer in its turn
+is responsible for output of the recognition results and  their timing
+information in the console. Apart from that Label writer  offers a configurable
+option to save the recognition and timing results to a file. An extract of such
+file is shown in the following figure. 
+
+\section {Architecture Overview of the Google-Sphinx Recognizer}
 Sphinx-Google architecture includes Sphinx-4 frontend, dictionary,
 language model and acoustic model, decoder with search graph, forced-alignment
 module, Sphinx control thread, synchronous blocking queue and InproTK IUs:
@@ -71,7 +90,8 @@ Google ASR, Sphinx ASR and label writer.  (see figure \ref {fig:arch}).
 As an audio input both Google ASR and Sphinx receive the same audio input.
 Input stream of Google ASR is set only once, whereas the length of
 the stream is equal to the whole audio. By contrast, the Sphinx input stream is
-updated every time, Google ASR returns new hypothesis. 
+updated every time, Google ASR returns new hypothesis.  
+
 
 GoogleASR listens to JSON results coming from online Google, running
 in incremental mode, and passes result to forced-alignment IU. Google ASR result
@@ -86,28 +106,109 @@ updates language model, resetting text for alignment. As soon as the grammar of
 the language model is changed, search graph of the decoder module is rebuild
 anew. 
 
-Every time the new hypothesis is taken from the queue Sphinx input stream  is
-also reset. The length of this stream is a part of the audio input.  
-
-
-Sphinx returns not only alignment result, based on Google ASR, but continues
-with recognition, while waiting for the new Google incremental result. 
-
-The initialisation and implementation of the SearchGraph is realised by
-Sphinx-4. The choice and alternation of the path in
-the SearchGraph depends on the Google incremental hypotheses. 
-When the new Google hypotheses differs from the present hypotheses in the
-SearchGraph, the SearchGraph is reseted and the hypotheses path is
-corrected.  Timeliness improvement is supposed to be achieved by faster results
-produced by Sphinx, whereas the path in the Sphinx SearchGraph is predetermined
-by Google incremental result. The last means that we get the same final results
-for Google and Google + Sphinx, but timeliness of Google + Sphinx
-is expected to be improved. 
-
-
 
 \section {Forced-alignment of Google Incremental Results with Google-Sphinx
 Recognizer}
+
+Every time the new hypothesis is taken from the queue Sphinx input stream  is
+also reset. Analyses of Google JSON files, containing the hypotheses times of Google, show
+that this time can be used to calculate the length of the input stream to be
+updated. In the GoogleASR INproTK module output  (compare  \ref
+{fig:google_ouput}) Google hypotheses time equals the end times of the word IU,
+put in the left buffer. 
+
+In the example \ref {fig:google_ouput}) the first hypotheses
+``ich'' came from Google at 750 ms. By this time in audio the words ``ich danke
+I\ldots'' already pronounced. If we substract network latency  
+from the hypotheses time, than we know that that Google was ready with its
+hypotheses several dozens milliseconds earlier.  In the case when latency is
+equals 100 ms, that is 650 ms. However, 650 ms is still far from the true end
+of the word ``ich'' in audio (350 ms). This difference of 300 ms is actually the
+latency time Google needs to come to confident result, before it produce the
+output. Under this consideration the following assumption is made: $Google
+hypotheses time>=hypotheses end im audio + Google offset + network latency$.
+With the first output Google waits 650 ms, the next outputs come 
+after 0 to 850 ms relative to the previous output. 
+
+In order to get correct alignment from Sphinx for  first Google result ``ich''
+it is enough to restart Sphinx with the grammar, containing the word ``ich''
+and piece of audio between 350 ms and 650 ms.  Alignment will also function  if
+the whole input stream is reseted with every new hypotheses. However, with such
+approach the processing time will grow quadratically (?). 
+
+Sphinx-4 in its standard implementation is able to do either alignment or
+recognition. Sphinx-4 Linguist example configuration, required for alignment, is
+shown in the figure \ref{fig:conf_al}. As it is seen from the example in the
+Sphinx+Google recognizer uses dynamic flat linguist and aligner grammar. 
+
+\begin{figure}[htbp]
+  \centering 
+ 
+ \lstdefinestyle{nonumbers} 
+{numbers=none}  
+\lstset{language=XML} 
+\lstset{ 
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,frame=single }  
+%\begin{lstlisting}[frame=single]
+ %backgroundcolor=\color{white}, 
+ %\begin{lstlisting}  
+\begin{lstlisting}[style=nonumbers]
+
+...
+<component name="linguistFA" type="edu.cmu.sphinx.linguist.dflat.DynamicFlatLinguist">  
+        <property name="logMath" value="logMath"/>
+       <property name="grammar" value="forcedAligner"/>   
+        <property name="acousticModel" value="acousticModel"/>
+        <property name="wordInsertionProbability" value="${wordInsertionProbability}"/>
+        <property name="silenceInsertionProbability" value="${silenceInsertionProbability}"/>
+        <property name="languageWeight" value="${languageWeight}"/>
+        <property name="unitManager" value="unitManager"/>
+    </component>
+
+...
+\end{lstlisting}
+ \caption{Extract from configuration file for Google-Sphinx Recognizer}
+  \label{fig:conf_al}
+\end {figure}
+
+Timing results of Sphinx, started after Google, are shown in the figure below
+(\ref{fig:conf_al_timing}):
+\begin{figure}[htbp]
+  \centering
+    \includegraphics[width=1.0\textwidth]{images/google_sphinx_output_al.png}
+ \caption{Google+Sphinx output with improvement timing. Vertical lines shows
+ the time, by which Google was ready with the corresponding hypotheses.
+ Right borders of the dotted boxes shows at what point of time Sphinx was ready
+ with its alignment.}
+  \label{fig:conf_al_timing}
+\end {figure}
+
+Comparison of visualization results with the corresponding Google
+output ((\ref{fig:google_ouput}) demonstrates qualitative timing improvement in terms
+of error rate, whereas the WER remains unchanged, as the output contains the
+same result as that of Google alone. The number of hypotheses is smaller,
+because Sphinx gets incremental results for processing only when
+forced-alignment of one result is finished.  If during Sphinx processing time
+Google produce additional hypotheses, this hypotheses are skipped and only the
+last one is taken for new processing. 
+
+
+%\section {Forced-alignment mode versus }
+\section {Timeliness Improvement}
+Sphinx returns not only alignment result, based on Google ASR, but continues
+with recognition, while waiting for the new Google incremental result. 
+
+% The initialisation and implementation of the SearchGraph is realised by
+% Sphinx-4. The choice and alternation of the path in
+% the SearchGraph depends on the Google incremental hypotheses. 
+% When the new Google hypotheses differs from the present hypotheses in the
+% SearchGraph, the SearchGraph is reseted and the hypotheses path is
+% corrected.  Timeliness improvement is supposed to be achieved by faster results
+% produced by Sphinx, whereas the path in the Sphinx SearchGraph is predetermined
+% by Google incremental result. The last means that we get the same final results
+% for Google and Google + Sphinx, but timeliness of Google + Sphinx
+%is expected to be improved. 
 \section {Search Module of Google-Sphinx Recognizer}
 \subsection {Decoder configuration}
 \subsection {Search Modification}
