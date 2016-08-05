@@ -134,7 +134,11 @@ In order to get correct alignment from Sphinx for  first Google result ``ich''
 it is enough to restart Sphinx with the grammar, containing the word ``ich''
 and piece of audio between 350 ms and 650 ms.  Alignment will also function  if
 the whole input stream is reseted with every new hypotheses. However, with such
-approach the processing time will grow quadratically (?). 
+approach the processing time will grow quadratically (?) and the quality of
+alignment will decrease. So the more accurate file length  matches the
+transcription the better are the alignment results. 
+
+\subsection {Forced-alignment mode of Sphinx+Google recognizer}
 
 Sphinx-4 in its standard implementation is able to do either alignment or
 recognition. Sphinx-4 Linguist example configuration, required for alignment, is
@@ -168,7 +172,8 @@ Sphinx+Google recognizer uses dynamic flat linguist and aligner grammar.
 
 ...
 \end{lstlisting}
- \caption{Extract from configuration file for Google-Sphinx Recognizer}
+ \caption{Extract from configuration file for Google-Sphinx Recognizer in
+ alignment mode}
   \label{fig:conf_al}
 \end {figure}
 
@@ -193,11 +198,168 @@ forced-alignment of one result is finished.  If during Sphinx processing time
 Google produce additional hypotheses, this hypotheses are skipped and only the
 last one is taken for new processing. 
 
+However, an obvious disadvantage of this alignment approach is additional
+latency produced by Sphinx during alignment.
+Alignment task, where the search path is known and defined is less time
+consuming as recognizing, demands nevertheless computation time.  Computation
+time depends on the processing power. If the Sphinx processing time could have
+been neglected, than we get an model of Google+Sphinx recognizer,
+comparable to Google in WERs and having an improved timing.
+
+\subsection {Forced-alignment and recognition mode  of Sphinx+Google recognizer}
+
+In the second approach Sphinx returns not only alignment result, based on Google
+ASR, but continues with recognition, while waiting for the new Google incremental result. 
+This approach solves several tasks. First, we get more precise alignment  in
+case of excessive input stream. Moreover, excessive input stream is
+even desirable as only additional frames guarantees recognition start after
+alignment is finished. Second, Sphinx produce some results with better
+timeliness, if it has finished alignment and is waiting for new Google
+hypotheses. Third, it possible to use the Google result to manipulate the search
+path in search graph of Sphinx and theoretically change to a path proposed by
+Google, if this path exist. 
+
+Configuration of Sphinx+Google recognizer in alignment and recognition mode
+uses dynamic flat linguist, because of the  advantages, described in the chapter
+\label{ref:sphinx}. As a grammars the following types were tested: JSGF grammar
+and n-gram Gram, based on default language model.  However, by contrast to standard Grammar
+implementation in Sphinx these grammars are combined with alignment grammar in
+their implementation.
+
+
+\begin{figure}[htbp]
+  \centering 
+ 
+ \lstdefinestyle{nonumbers} 
+{numbers=none}  
+\lstset{language=XML} 
+\lstset{ 
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,frame=single }  
+%\begin{lstlisting}[frame=single]
+ %backgroundcolor=\color{white}, 
+ %\begin{lstlisting}  
+\begin{lstlisting}[style=nonumbers]
+
+...
+
+      <component name="linguistFA"type="edu.cmu.sphinx.linguist.dflat.DynamicFlatLinguist"> 
+      <property name="logMath" value="logMath"/>
+        <property name="grammar" value="ngramGrammar"/> 
+        <!--  <property name="grammar" value="myjsgfGrammar"/>--> 
+        <property name="acousticModel" value="acousticModel"/>
+        <property name="wordInsertionProbability" value="${wordInsertionProbability}"/>
+        <property name="silenceInsertionProbability" value="${silenceInsertionProbability}"/>
+        <property name="languageWeight" value="${languageWeight}"/>
+        <property name="unitManager" value="unitManager"/>
+    </component>
+
+...
+\end{lstlisting}t 
+ \caption{Extract from configuration file for Google-Sphinx Recognizer in
+ alignment and recognition mode}
+  \label{fig:conf_al_rec}
+\end {figure}
+
+
+\ldots How the grammar are combined write here in some more details with example
+probably. 
+
+\subsection {Alignment +Recognition with JSGF Grammar}
+To demonstrate that alignment and recognition are able to be combined any
+type of JSGF grammar can be used. However, as JSGF grammar describe 
+relative small command languages, we used a phone loop grammar in JSGF format,
+suitable for more universal tasks.
+
+An example of such grammar is shown in the figure   \ref{fig:phone_loop}
+
+\begin{figure}[htbp]
+ % \centering 
+%  \lstset{
+%   literate={@}{{\"u}}1
+% }
+%  \lstdefinestyle{nonumbers} 
+%  {numbers=none} 
+%  
+%  
+% %\begin{center}
+% %\begin{lstlisting}[style=nonumbers]
+
+grammar phones;
+
+public <phones> = \begin{IPA}(2: | 6 | 9 | @ | C | E | E: | I | N | O | OY | Q |
+S | SIL | U | Y | Z  | a | a: | aI | aU | b | d | e |  e: | f | g |h | i | i: |
+j | k | l | m | n | o | o: | p| r | s |  t | u | u: | v | x | y: | z
+)*;\end{IPA}
+
+
+%\end{center}
+%\includegraphics[width=0.5\textwidth]{images/dic.png}
+ \caption{An extract from the dictionary file.}
+  \label{fig:phone_loop}
+\end {figure}
+
+Described phone-loop grammar is prototypical and uses no weights. Result of the
+recognition of audio with transcription ``eins zwei drei vier'', using the
+phone-loop grammar   \ref{fig:phone_loop} are shown in the figure
+\ref{fig:phone_loop_res}.
+
+
+\begin{figure}[htbp]
+ \centering 
+
+  \lstdefinestyle{nonumbers} 
+  {numbers=none} 
+  
+\begin{center}
+\begin{lstlisting}[style=nonumbers]
+
+
+0.000	0.680	ein
+0.430	1.030	zwei
+0.720	0.760	<sil>
+0.860	0.890	<sil>
+0.890	0.920	<sil>
+0.920	1.010	c
+1.010	1.070	i
+1.070	1.120	6
+1.120	1.200	i
+1.200	1.310	e
+1.310	1.420	sil
+1.420	1.610	e
+1.610	1.670	l
+1.670	1.720	i
+1.720	1.990	l
+1.990	2.040	p
+2.040	2.140	p
+2.140	2.340	i
+2.340	2.490	e
+2.490	2.580	6
+2.580	2.640	r
+2.640	2.710	sil
+2.710	2.780	<sil>
+
+
+\end{lstlisting}
+\end{center}
+%\includegraphics[width=0.5\textwidth]{images/dic.png}
+ \caption{Alignment + Recognition result, using combined grammar, based on
+ fixed input ``eins zwei'' and phone-loop JSGF grammar for the audio, having
+ transcription ``eins zwei drei vier'' (\ref{fig:phone_loop_res})}.
+ 
+  \label{fig:phone_loop_res}
+\end {figure}
+
+
+\subsection {Alignment +Recognition with N-Gram Grammar}
+
+
 
 %\section {Forced-alignment mode versus }
 \section {Timeliness Improvement}
-Sphinx returns not only alignment result, based on Google ASR, but continues
-with recognition, while waiting for the new Google incremental result. 
+
+
+
 
 % The initialisation and implementation of the SearchGraph is realised by
 % Sphinx-4. The choice and alternation of the path in
