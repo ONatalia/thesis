@@ -9,11 +9,12 @@ recogniser are analysed in more details.
  \begin{figure}[htbp]
   \centering
     \includegraphics[width=1.0\textwidth]{images/sphinxarch.png}
- \caption{Sphinx-4 Architecture Overview}\parencite {Lamereetal2013:Eurospeech}
+ \caption{Sphinx-4 Architecture Overview \parencite
+ {Lamereetal2013:Eurospeech}.}
   \label{fig:sphinx arh}
 \end {figure}
 
- \section {Acoustic analysis} 
+ \section {Acoustic Analysis} 
 
 Frontend computes Y - feature vector  representation of a speech signal, using
 acoustic analysis.  It provides methods for manipulating the data processors, performing
@@ -26,14 +27,14 @@ Preprocessing of speech as an analogous signal demands the following steps. Firs
 continuous one. Second, the samples are quantized, mapping the analog values to digitalised ones. Third, a digital signal is converted to its 
 spectral representation, applying a short-time Fourier transform. The resulting sound spectrum contains the amount of vibration at each individual frequency. 
 Figure \ref {fig:spectro} shows a wave form, pitch contour, spectral
-representation and transcription with alignment of the phrase ``ich danke
- Ihnen und wir sehen uns dann''.
+representation and transcription with alignment of the phrase \textit {ich danke
+ Ihnen und wir sehen uns dann}.
 \begin{figure}[htbp]
   \centering
     \includegraphics[width=1.0\textwidth]{images/spectro.png}
- \caption{from the top of the figure: an acoustic waveform, pitch contour,
- spectrogram and transcription with gold alignment of the phrase ``ich danke
- Ihnen und wir sehen uns dann'' }
+ \caption{From the top of the figure: an acoustic waveform, pitch contour,
+ spectrogram and transcription with gold alignment of the phrase \textit {ich
+ danke Ihnen und wir sehen uns dann}. }
   \label{fig:spectro}
 \end {figure}
 
@@ -44,7 +45,7 @@ of the resulting spectrum, so-called mel frequency cepstrum coefficients (MFCC).
 Resulting acoustic vectors of features are used as a representation of a sound waveform, forwarded to the decoder for recognition  \parencite
 {jurafskymartin2009}.
 
-\section {Acoustic model} 
+\section {Acoustic Model} 
 
 Acoustic model finds out the probability for an observing an acoustic vector Y
 given a sequence of words P (Y|W). Theoretically, for a small vocabulary it can
@@ -58,16 +59,14 @@ particular phoneme. An example HMM is depicted in the figure \ref
 {fig:onehmm}. This HMM for phoneme recognition has 3 states S0, S1, S2. Letters
 ’A’ shows the transition probabilities within the states, ’B’ - output probabilities, ’Y’ -observations.  Sphinx-4 is a typical
 HMM-based speech recognizer with 3 and 5 states HMMs. 
+\parencite {jurafskymartin2009}. 
+
 \begin{figure}[htbp]
   \centering
     \includegraphics[width=1.0\textwidth]{images/one_hmm.png}
  \caption{A typical HMM abstraction \parencite {jurafskymartin2009}. }
   \label{fig:onehmm}
 \end {figure}
-In order to get a statistical representation of phonemes, i. e, build an
-automate with transition probabilities for each phoneme, the speech corpus data is subjected
-to the training process \parencite {jurafskymartin2009}. 
-
 
 Word representations in acoustic model forms a network of HMMs. Acoustic models
 are created from an hours-long audio recordings and their corresponding transcriptions. In order to
@@ -80,7 +79,7 @@ increases performance of a recogniser. To match specific conditions of an applic
 enough training data is available.
 
 
-\section {Language model} 
+\section {Language Model} 
 
 Language model describes the probability of a word in a speech sequence P (W)
 and attempts to predict the next word in a sentence, depending on the prior context.
@@ -108,9 +107,10 @@ An extract from a statistical language model is shown in the figure \ref
  \begin{figure}[htbp]
   \centering 
  
- \lstdefinestyle{nonumbers} 
- {numbers=none}  
-\begin{lstlisting}[style=nonumbers]
+% \lstdefinestyle{nonumbers} 
+ %{numbers=none}  
+%\begin{lstlisting}[style=nonumbers]
+\begin{lstlisting}[frame=single]
 ...
 \data\
 ngram 1=4604
@@ -131,11 +131,11 @@ ngram 3=80671
 -0.0941 wir sieben Uhr 
 ...
 \end{lstlisting}
- \caption{Extract from Verbmobil language model for Sphinx-4}
+ \caption{An extract from Verbmobil language model for Sphinx-4.}
   \label{fig:lm}
 \end {figure}
 
-Statistical language models are built on a basis of an application corpus.
+Statistical language models are built on the basis of an application corpus.
 Corpus contains a list of sentences that are used to train the language model. The best results are achieved, when the model is tuned the 
 application speech situation. Statistical language models for telephone
 conversations are less effective for robot instructions.
@@ -150,16 +150,17 @@ digits is shown in the  picture \ref {fig:grammar} .
  \lstset{
   literate={ü}{{\"u}}1
 }
- \lstdefinestyle{nonumbers} 
- {numbers=none}  
-\begin{lstlisting}[style=nonumbers]
+%  \lstdefinestyle{nonumbers} 
+%  {numbers=none}  
+%\begin{lstlisting}[style=nonumbers]
+\begin{lstlisting}[frame=single]
 grammar digits;
 
-public <numbers> = ( eins | zwei | drei | vier | fünf | sechs |
-sieben | acht | neun | null) * ;
+public <numbers> = ( eins | zwei | drei | vier | fünf |
+ sechs |sieben | acht | neun | null) * ;
 
 \end{lstlisting}
- \caption{JSGF Grammar for German digits}
+ \caption{JSGF grammar for German digits from one to ten.}
   \label{fig:grammar}
 \end {figure}
 
@@ -167,36 +168,42 @@ Here also some words about Aligner Grammar for forced-alignment.
 
 \section {Dictionary} 
 
-Pronunciation dictionary belongs to the knowlodge base of Sphinx-4. It is made
+Pronunciation dictionary belongs to the knowledge base of Sphinx-4. It is made
 of all occurred in the application words and their transcriptions. Pronunciation dictionary is used by the decoder during word identification as a reference. 
 A typical transcription file is shown in the figure \ref {fig:dic}.
 \newline
 \begin{figure}[htbp]
  % \centering 
-%  \lstset{
-%   literate={@}{{\"u}}1
-% }
+\lstset{literate=%
+  {Ö}{{\"O}}1
+  {Ä}{{\"A}}1
+  {Ü}{{\"U}}1
+  {ß}{{\ss}}2
+  {ü}{{\"u}}1
+  {ä}{{\"a}}1
+  {ö}{{\"o}}1
+}
 %  \lstdefinestyle{nonumbers} 
 %  {numbers=none} 
 %  
 %  
 % %\begin{center}
 % %\begin{lstlisting}[style=nonumbers]
-
-spezifizieren	\begin{IPA} S p e t s i f i t s i: 6 n  \end{IPA}
-\newline grenz	\begin{IPA}g r E n t s \end{IPA}
-\newline sechsund	\begin{IPA}z E k s U n t\end{IPA}
-\newline Malediven	\begin{IPA}m a l e d i: v @ n\end{IPA}
-\newline Gemütlicheres	\begin{IPA}g @ m y: t l I C @ r @ s\end{IPA}
-\newline lau	\begin{IPA}l aU\end{IPA}
-\newline zugereicht	\begin{IPA}t s u: g @ r aI j t\end{IPA}
-\newline vornehmer	\begin{IPA}f o: 6 n e: m 6\end{IPA}
-\newline gereist	\begin{IPA}g @ r aI s t\end{IPA}
-\newline Südfrankreich	\begin{IPA}z y: t f r a N k r aI C\end{IPA}
-\newline zerteilen	\begin{IPA}t s E 6 t aI l n\end{IPA}
-%\end{center}
-%\includegraphics[width=0.5\textwidth]{images/dic.png}
- \caption{An extract from the dictionary file.}
+\begin{lstlisting}[frame=single]
+spezifizieren	S p e t s i f i t s i: 6 n  
+grenz	g r E n t s 
+sechsund	z E k s U n t
+Malediven	m a l e d i: v @ n
+Gemütlicheres	g @ m y: t l I C @ r @ s
+lau	l aU
+zugereicht	t s u: g @ r aI j t
+vornehmer	f o: 6 n e: m 6
+gereist	g @ r aI s t
+Südfrankreich	z y: t f r a N k r aI C
+zerteilen	t s E 6 t aI l n
+\end{lstlisting}
+ \caption{An extract from the dictionary file. For correspondence between
+ Sphinx-4 representation and German phonemes see appendix \ref{chap:appA}. }
   \label{fig:dic}
 \end {figure}
 \newline
@@ -237,7 +244,7 @@ finds the path with the best score.
 \begin{figure}[htbp]
   \centering
     \includegraphics[width=1.0\textwidth]{images/viterbi.png}
- \caption{Viterbi Search as Dynamic Programming \parencite
+ \caption{Viterbi search as dynamic programming \parencite
 {Ravishankar96efficientalgorithms}.}
   \label{fig:hmm}
 \end {figure}
@@ -245,8 +252,8 @@ finds the path with the best score.
 Abstract representation of the Viterbi algorithm is shown in the in the figure 4.7. One axis represent states in the HMM network, another time.
  Arrows means transitions through the network. Each point in this 2-D space represents the best path probability for the corresponding state at that time. 
  Every state has a best predecessor and starting from the final state and using backtracking it is possible to find the best path sequence for the whole search.
-Complexity of Viterbi algorithm is equal N2 T, where N is the total number of
-states and T is the total duration \parencite
+Complexity of Viterbi algorithm is equal $\mathcal{O}(N2T)$, where N
+is the total number of states and T is the total duration \parencite
 {Ravishankar96efficientalgorithms}. In Sphinx-4 Viterbi search is implemented as
 Token Passing Algorithm \parencite {Young89Token}. 
 
@@ -265,16 +272,16 @@ and ``two'' is shown in the figure \ref{fig:hmm}.
 \begin{figure}[htbp]
   \centering
     \includegraphics[width=1.0\textwidth]{images/hmm.png}
- \caption{An example search graph for the words ``one'' and ``two''}
+ \caption{An example search graph for the words ``one'' and ``two''.}
   \label{fig:hmm}
 \end {figure}
 
 The main types of Linguist in Sphinx-4 are: flat linguist, dynamic flat linguist
 and lex tree linguist. 
 
-\subsection {flat linguist} 
-\subsection {dynamic flat linguist} 
-\subsection {lex tree linguist} 
+\subsection {Flat Linguist} 
+\subsection {Dynamic Flat Linguist} 
+\subsection {Lex Tree Linguist} 
 
 
 

@@ -2,7 +2,7 @@
 %%There is just one section and two subsections.
 %\documentclass[a4paper, 12pt]{article}
 %\documentclass[pdftex,a4paper,11pt,DIV15,BCOR20mm,parskip,numbers=noenddot]{book}
-\documentclass[pdftex,a4paper,11pt,DIV15,BCOR20mm,parskip,numbers=noenddot,onesided]{scrbook}
+\documentclass[pdftex,a4paper,12pt,DIV15,BCOR20mm,parskip,numbers=noenddot,onesided]{scrbook}
 
   %\usepackage{german, ngerman} %Deutsche Trennungen, Anf�hrungsstriche und mehr
 	\usepackage[ngerman,english]{babel} % dt. Sprache laden (u.a. auch Ausgabe
@@ -26,6 +26,7 @@
   \usepackage[style=authoryear, backend=biber]{biblatex} 
   \usepackage[utf8]{inputenc}
    \usepackage {lscape}
+   \usepackage{booktabs}
 
   \usepackage{colortbl} % f�r farbige Tabellen
 	\usepackage{longtable} % f�r mehrseitige Tabellen
@@ -153,36 +154,31 @@
   
  
   % Listingsformatierung (Quelltexte)
-  \definecolor{lightgrey}{rgb}{0.90,0.90,0.90}
-  \lstloadlanguages{XML}
-  \lstset{
-    tabsize=2,
-    escapeinside={(*@}{@*)},
-    captionpos=t,
-    framerule=0pt,
-    backgroundcolor=\color{lightgrey},
-    basicstyle=\small\ttfamily,
-    keywordstyle=\small\bfseries,
-    numbers=left,
-    fontadjust
-  } 
+%   \definecolor{lightgrey}{rgb}{0.90,0.90,0.90}
+%   \lstloadlanguages{XML}
+%   \lstset{
+%     tabsize=2,
+%     escapeinside={(*@}{@*)},
+%     captionpos=t,
+%     framerule=0pt,
+%     backgroundcolor=\color{lightgrey},
+%     basicstyle=\small\ttfamily,
+%     keywordstyle=\small\bfseries,
+%     numbers=left,
+%     fontadjust
+%   } 
 % \bibliography{bibliography/literatur}  
  \bibliography{bibliography/literatur.bib} 
- \let\cleardoublepage\clearpage    
+ %\let\cleardoublepage\clearpage    
 \begin {document}
 %\renewcommand\thechapter{\arabic{chapters}}
 %\renewcommand\thesection{\arabic{section}}
 \input{chapters/titelseite}  
 \pagenumbering {roman}
 \input{chapters/abstract}
-%\input{chapters/dedication}
-
-%\input{chapters/acknowledgements}
 \tableofcontents
-\listoffigures
-\listoftables
-\pagenumbering {arabic}
 \input{chapters/introduction}
+\pagenumbering {arabic}
 \input{chapters/stateoftheart}
 \input{chapters/terms}
 \input{chapters/sphinx}
@@ -197,8 +193,10 @@
  \end{appendix}
 \newpage
 \phantomsection % ben�tigt f�r korrekte pdf-darstellung
-\addcontentsline{toc}{chapter}{References}
+\addcontentsline{toc}{chapter}{Bibliography}
 \printbibliography 
+\listoffigures
+\listoftables
 \input{chapters/declaration} 
 \end{document}
 %

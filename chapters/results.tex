@@ -1,78 +1,90 @@
 \chapter{Results and Evaluation}
 \label{chap:res}
  \section {Testing Approach} 
-For testing purposes  a corpus of  Verbmobil-Data (Dialogues about meeting appointments)  is
-available.  Each record contains audio file, used by the recognizer as input in
-one of the configurations,  and ``gold'' standard with the true words from the
-audio, including true alignments.  Depending on the program configuration 
- the following types of outputs are possible:
+For testing purposes  a corpus of  Verbmobil-Data (dialogues about meeting
+appointments)  is available.  Each record contains audio file, used by the recognizer as input in
+one of the configurations,  and \textit {gold standard}
+with the true words from the audio, including true alignments.  Depending on the program configuration 
+ the following types of outputs were compared:
 \begin {enumerate}
   \item Google incremental output (1).
   \item Sphinx incremental output: Sphinx in recognition mode, using available
   language model (2).
-  \item Sphinx output: Sphinx in forced-alignment mode,forced-alignment of gold
-  standard transcription non-incremental (3).
-  \item Google+Sphinx: Sphinx in forced-alignment mode after Google
-  non-incremental, non-incremental alignment only of the final result (4).
-  \item Google+Sphinx: Sphinx in forced-alignment mode after Google
+  \item Google+Sphinx: Sphinx in forced alignment mode after Google
   incrementally, alignment of the incremental results as described in the
-  chapter \ref {chap:implem} (5).
-  \item Google+Sphinx: Sphinx in forced-alignment and recognition mode,
-  combined alignment and phone loop grammar (6).
-  \item Google+Sphinx: Sphinx in forced-alignment and recognition mode,combined
-  alignment grammar and the same language model as in item number 1 (7). 
+  chapter \ref {chap:implem} (3).
+  \item Google+Sphinx: Sphinx in forced alignment and recognition mode,
+  combined alignment and phone loop grammar (4).
+  \item Google+Sphinx: Sphinx in forced alignment and recognition mode,combined
+  alignment grammar and the same language model as in item number 1 (5). 
 \end{enumerate}
 \section {Test Results} 
+\subsection {Alignment quality}
 \begin {table}
 \label{tab:alignment_non_increm} 
 \begin{center}
-    \begin{tabular}{| l | c | c | c |}
-    \hline
-    Recognizer & Mean & St. Deviation & RMSE \\ \hline
-    Google (1)  & ms & ms & ms \\ \hline
-    Sphinx (2)  & ms & ms & ms \\ \hline
-    Sphinx (3)  & ms & ms & ms \\ \hline
-    Google+Sphinx (4)  & ms & ms & ms \\ \hline
-    Google+Sphinx (5)  & ms & ms & ms \\ \hline
-    Google+Sphinx (6)  & ms & ms & ms \\ \hline
-     Google+Sphinx (7)  & ms & ms & ms \\ \hline   
+\caption {Alignments quality of the recognizer in different configurations.}
+    \begin{tabular}{l  c  c  c }
+   \toprule
+    Recognizer & Mean & stddev & RMSE \\ \toprule
+    Google (1)  & ms & ms & ms \\ 
+    Sphinx (2)  & ms & ms & ms \\ 
+    Google+Sphinx (3)  & ms & ms & ms \\ 
+    Google+Sphinx (4)  & ms & ms & ms \\ 
+    Google+Sphinx (5)  & ms & ms & ms \\ \bottomrule  
     \end{tabular}
-\caption {Alignments quality of the recognizer in different configurations}
+\end{center}
+\end {table}
+\begin {table}
+\label{tab:alignment_incr} 
+\begin{center}
+\caption {Incremental alignments quality of the recognizer in different
+configurations.}
+    \begin{tabular}{ l  c  c  c }
+    \toprule
+    Recognizer & mean  & stddev & RMSE\\ \toprule
+    Google (1)  & ms & ms & ms \\ 
+    Sphinx (2)  & ms & ms & ms \\ 
+    Google+Sphinx (3)  & ms & ms & ms \\ 
+    Google+Sphinx (4)  & ms & ms & ms \\ 
+    Google+Sphinx (5)  & ms & ms & ms \\ \bottomrule  
+    \end{tabular}
+\end{center}
+\end {table}
+\subsection {Timeliness quality}
+\begin {table}
+\label{tab:alignment_incr} 
+\begin{center}
+\caption {Timeliness quality of the recognizer in different configurations. FO
+results.}
+    \begin{tabular}{ l  c  c  c }
+    \toprule
+    Recognizer & mean & stddev & median \\ \toprule
+    Google (1)  & 3333 ms & 3715 ms &  1480 ms\\
+    Sphinx (2)  &284 ms & 709 ms & 130 ms \\
+    Google+Sphinx (3)  & ms & ms & ms \\ 
+    Google+Sphinx (4)  & ms & & \\ 
+    Google+Sphinx (5)  & ms & &  \\ \bottomrule  
+    \end{tabular}
 \end{center}
 \end {table}
 
 \begin {table}
 \label{tab:alignment_incr} 
 \begin{center}
-    \begin{tabular}{| l | c | c | c |}
-    \hline
-    Recognizer & FO \\ \hline
-    Google (1)  & ms & ms & ms \\ \hline
-    Sphinx (2)  & ms & ms & ms \\ \hline
-    Google+Sphinx (5)  & ms & ms & ms \\ \hline
-    Google+Sphinx (6)  & ms & ms & ms \\ \hline
-    Google+Sphinx (7)  & ms & ms & ms \\ \hline   
+\caption {Timeliness quality of the recognizer in different configurations. FD
+results.}
+    \begin{tabular}{ l  c  c  c }
+    %\hline
+    \toprule
+    Recognizer & mean & stddev & median \\ \toprule
+    Google (1)  & 3833 ms & 4271 ms & 1725 ms  \\ 
+    Sphinx (2)  & 324 ms & 705 ms & 170 ms \\ 
+    Google+Sphinx (3)  & ms & ms & ms \\ 
+    Google+Sphinx (4)  & ms  & & \\ 
+    Google+Sphinx (5)  & ms  & &\\ \bottomrule   
     \end{tabular}
-\caption {Incremental alignments quality of the recognizer only in incremental
-configurations}
 \end{center}
 \end {table}
-
-\begin {table}
-\label{tab:alignment_incr} 
-\begin{center}
-    \begin{tabular}{| l | c | c | c |}
-    \hline
-    Recognizer & FO \\ \hline
-    Google (1)  & ms  \\ \hline
-    Sphinx (2)  & ms  \\ \hline
-    Google+Sphinx (6)  & ms  \\ \hline
-    Google+Sphinx (7)  & ms  \\ \hline   
-    \end{tabular}
-\caption {Incremental timing quality of the recognizer}
-\end{center}
-\end {table}
-
-
 
 \section {Tests Evaluation} 
