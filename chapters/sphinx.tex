@@ -16,8 +16,8 @@ recogniser are analysed in more details.
 
  \section {Acoustic Analysis} 
 
-Frontend computes Y - feature vector  representation of a speech signal, using
-acoustic analysis.  It provides methods for manipulating the data processors, performing
+Frontend computes feature vector \textit {Y } - representation of a speech
+signal, using acoustic analysis.  It provides methods for manipulating the data processors, performing
 specific transformation functions on input data \parencite{Lamereetal2013:Eurospeech}.
 
 In a physical sense human speech is a sound wave, characterized by a particular amplitude, frequency, period and length.
@@ -47,9 +47,9 @@ Resulting acoustic vectors of features are used as a representation of a sound w
 
 \section {Acoustic Model} 
 
-Acoustic model finds out the probability for an observing an acoustic vector Y
-given a sequence of words P (Y|W). Theoretically, for a small vocabulary it can
-be found by sampling several variants of the words and computing statistical similarity of the inputs with 
+Acoustic model finds out the probability for an observing an acoustic vector
+\textit {Y } given a sequence of words \textit {P (Y|W)}. Theoretically, for a
+small vocabulary it can be found by sampling several variants of the words and computing statistical similarity of the inputs with 
 the existing samples. However, when the vocabulary is very large we have to move
 down to the level of word subunits or phonemes.
 
@@ -58,7 +58,7 @@ Markov Models (HMM), which abstracts the physical process of pronouncing of a
 particular phoneme. An example HMM is depicted in the figure \ref
 {fig:onehmm}. This HMM for phoneme recognition has 3 states S0, S1, S2. Letters
 ’A’ shows the transition probabilities within the states, ’B’ - output probabilities, ’Y’ -observations.  Sphinx-4 is a typical
-HMM-based speech recognizer with 3 and 5 states HMMs. 
+HMM-based speech recognizer with 3 and 5 states HMMs 
 \parencite {jurafskymartin2009}. 
 
 \begin{figure}[htbp]
@@ -68,9 +68,10 @@ HMM-based speech recognizer with 3 and 5 states HMMs.
   \label{fig:onehmm}
 \end {figure}
 
-Word representations in acoustic model forms a network of HMMs. Acoustic models
+Word representations in acoustic model form a network of HMMs. Acoustic models
 are created from an hours-long audio recordings and their corresponding transcriptions. In order to
-get a statistical representation of phonemes, i. e, build HMM for each phoneme, the speech corpus data is subjected to the training process. 
+get a statistical representation of phonemes, i. e, build a HMM for each
+phoneme, the speech corpus data is subjected to the training process.
 Speech corpus data and resulting models differs in speech parameters: microphone speech, broadcast speech, conversational speech, 
 telephone speech. Too general 
 models are not applicable for more specific language conditions, whereas too specific models are limited in its usage. The right 
@@ -81,8 +82,9 @@ enough training data is available.
 
 \section {Language Model} 
 
-Language model describes the probability of a word in a speech sequence P (W)
-and attempts to predict the next word in a sentence, depending on the prior context.
+Language model describes the probability of a word in a speech sequence \textit
+{Y } {P (W)} and attempts to predict the next word in a sentence, depending on
+the prior context.
 Language models are based on n-gram sequences of words, where the number of words of
 the prior context is equal n-1. Language models are built on the basis of an
 application corpus \parencite {jurafskymartin2009}. Depending on the
@@ -255,7 +257,7 @@ Abstract representation of the Viterbi algorithm is shown in the in the figure 4
 Complexity of Viterbi algorithm is equal $\mathcal{O}(N2T)$, where N
 is the total number of states and T is the total duration \parencite
 {Ravishankar96efficientalgorithms}. In Sphinx-4 Viterbi search is implemented as
-Token Passing Algorithm \parencite {Young89Token}. 
+\textit {token passing algorithm} \parencite {Young89Token}. 
 
 \section {Search Graph and Linguist} 
 

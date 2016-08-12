@@ -21,8 +21,8 @@ shown in the figure.
   \label{fig:IUs}
 \end {figure}
 Processing of IUs is guarantied by IU modules. IU
-modules consist of left buffer, right buffer and processors.  INproTK Different IUs
-modules are interconnected with each other, forming a pipeline of IU modules \parencite {baumann2013:phd}. A typical
+modules consist of left buffer, right buffer and processors.  
+Different IUs modules are interconnected with each other, forming a pipeline of IU modules \parencite {baumann2013:phd}. A typical
 communication between two IU modules is shown in the figure \ref{fig:IUs}.
 \begin{figure}[htbp]
   \centering
@@ -77,7 +77,7 @@ files can be found in the appendix \ref{chap:appB}.
 
 \section {Architecture Overview of the Google+Sphinx Recognizer}
 Sphinx-Google architecture includes Sphinx-4 frontend, dictionary,
-language model and acoustic model, decoder with search graph, forced-alignment
+language model and acoustic model, decoder with search graph, forced alignment
 module, Sphinx control thread, synchronous blocking queue and InproTK IUs:
 Google ASR, Sphinx ASR and label writer (see figure \ref {fig:arch}).
 \begin{figure}[htbp]
@@ -95,12 +95,12 @@ updated every time, Google ASR returns a new hypothesis.
 
 
 GoogleASR listens to JSON results coming from online Google, running
-in incremental mode, and passes result to forced-alignment IU. Google ASR result
-is transferred to forced-alignment IU via standard IU left-right buffer. Google
+in incremental mode, and passes result to forced alignment IU. Google ASR result
+is transferred to forced alignment IU via standard IU left-right buffer. Google
 ASR result contains hypothesis, and the start and end times, computed by Google
 ASR for every hypothesis. 
 
-Forced-alignment IU puts every incremental Google result into synchronous
+forced alignment IU puts every incremental Google result into synchronous
 blocking queue. Sphinx control thread takes the last Google hypothesis from the
 synchronous blocking queue and starts Sphinx decoding. Sphinx control thread
 updates language model, resetting text for alignment. As soon as the grammar of
@@ -108,7 +108,7 @@ the language model is changed, search graph of the decoder module is rebuild
 anew. 
 
 
-\section {Forced-alignment of Google Incremental Results with Google+Sphinx
+\section {Forced Alignment of Google Incremental Results with Google+Sphinx
 Recognizer}
 
 Every time a new hypothesis is taken from the queue Sphinx input stream  is
@@ -125,9 +125,9 @@ from the hypotheses time, than we know that that Google was ready with its
 hypothesis several dozens milliseconds earlier.  In the case when latency is
 equals 100 ms, that is 650 ms. However, 650 ms is still far from the true end
 of the word \textit {ich} in audio (350 ms). This difference of 300 ms is
-actually the latency time Google needs to come to confident result, before it produce the
-output. Under this consideration the following assumption is made: Google
-hypothesis time ($t_{hyp}$) consists of a time till the matched word end
+actually the latency time Google needs to come to a confident result, before it
+produces the output. Under this consideration the following assumption is made:
+Google hypothesis time ($t_{hyp}$) consists of a time till the matched word end
 ($t_{we}$) im audio plus Google offset ($t_{offset}$) and finally network latency
 ($t_{lat}$):
 \begin {equation}
@@ -144,7 +144,7 @@ approach the processing time will grow quadratically (?) and the quality of
 alignment will decrease. So the more accurate file length  matches the
 transcription the better are the alignment results. 
 
-\subsection {Forced-alignment Mode of the Sphinx+Google Recognizer}
+\subsection {forced alignment Mode of the Sphinx+Google Recognizer}
 
 Sphinx-4 in its standard implementation is able to do either alignment or
 recognition. Sphinx-4 Linguist example configuration, required for alignment, is
@@ -198,10 +198,10 @@ Timing results of Sphinx, started after Google, are shown in the figure below
 
 Comparison of visualization results with the corresponding Google
 output (\ref{fig:google_ouput}) demonstrates qualitative timing improvement in terms
-of error rate, whereas the WER remains unchanged, as the output contains the
-same result as that of Google alone. The number of hypotheses is smaller,
+alignment quality, whereas the WER remains unchanged, as the output contains
+the same result as that of Google alone. The number of hypotheses is smaller,
 because Sphinx gets incremental results for processing only when
-forced-alignment of one result is finished.  If during Sphinx processing time
+forced alignment of one result is finished.  If during Sphinx processing time
 Google produce additional hypotheses, these hypotheses are skipped and only the
 last one is taken for new processing. 
 
@@ -220,7 +220,7 @@ ASR, but continues with recognition, while waiting for the new Google incrementa
 This approach solves several tasks. First, we get more precise alignment  in
 case of excessive input stream. Moreover, excessive input stream is
 even desirable as only additional frames guarantees recognition start after
-alignment is finished. Second, Sphinx produce some results with better
+alignment is finished. Second, Sphinx produces some results with better
 timeliness, if it has finished alignment and is waiting for new Google
 hypotheses. Third, it possible to use the Google result to manipulate the search
 path in search graph of Sphinx and theoretically change to a path proposed by
@@ -351,7 +351,7 @@ figure \ref{fig:phone_loop_res}.
 
 
 
-%\section {Forced-alignment mode versus }
+%\section {forced alignment mode versus }
 \section {Timeliness Improvement}
 
 

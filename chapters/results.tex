@@ -20,23 +20,45 @@ with the true words from the audio, including true alignments.  Depending on the
 \end{enumerate}
 \section {Test Results} 
 \subsection {Alignment quality}
+Results of the alignment quality analyses in shown in the following tables.  The
+first table \ref{tab:alignment_non_increm_ms} shows results for matches and
+substitutions, whereas the table \ref{tab:alignment_non_incr_m} shows results
+only for matches. 
 \begin {table}
 \label{tab:alignment_non_increm} 
 \begin{center}
-\caption {Alignments quality of the recognizer in different configurations.}
+\caption {Alignments quality of the recognizer for matches and substitutions in
+different configurations.}
     \begin{tabular}{l  c  c  c }
    \toprule
-    Recognizer & Mean & stddev & RMSE \\ \toprule
-    Google (1)  & ms & ms & ms \\ 
-    Sphinx (2)  & ms & ms & ms \\ 
-    Google+Sphinx (3)  & ms & ms & ms \\ 
+    Recognizer & mean & stddev & RMSE \\ \toprule
+    Google (1)  & 1301 ms &  663 ms & 1533 ms \\ 
+    Sphinx (2)  & 121 ms & 129 ms & 194 ms \\ 
+    Google+Sphinx (3)  &  328  ms & 269 ms &  399 ms \\ 
+    Google+Sphinx (4)  & ms & ms & ms \\ 
+    Google+Sphinx (5)  & ms & ms & ms \\ \bottomrule  
+    \end{tabular}
+\end{center}
+\end {table}
+
+\begin {table}
+\label{tab:alignment_non_increm_ms} 
+\begin{center}
+\caption {Alignments quality of the recognizer only for matches 
+in different configurations.}
+    \begin{tabular}{l  c  c  c }
+   \toprule
+    Recognizer & mean & stddev & RMSE \\ \toprule
+    Google (1)  & 1378 ms & 621 ms & 1619 ms \\ 
+    Sphinx (2)  & 167 ms & 360 ms & 320 ms \\ 
+    Google+Sphinx (3)  & 291 ms &  199 ms &  401 ms \\ 
     Google+Sphinx (4)  & ms & ms & ms \\ 
     Google+Sphinx (5)  & ms & ms & ms \\ \bottomrule  
     \end{tabular}
 \end{center}
 \end {table}
 \begin {table}
-\label{tab:alignment_incr} 
+\label{tab:alignment_non_incr_m} 
 \begin{center}
 \caption {Incremental alignments quality of the recognizer in different
 configurations.}
@@ -62,7 +84,7 @@ results.}
     Recognizer & mean & stddev & median \\ \toprule
     Google (1)  & 3333 ms & 3715 ms &  1480 ms\\
     Sphinx (2)  &284 ms & 709 ms & 130 ms \\
-    Google+Sphinx (3)  & ms & ms & ms \\ 
+    Google+Sphinx (3)  & 3333+284 ms & 3715+709 ms & 1480+130 ms \\ 
     Google+Sphinx (4)  & ms & & \\ 
     Google+Sphinx (5)  & ms & &  \\ \bottomrule  
     \end{tabular}
@@ -80,7 +102,7 @@ results.}
     Recognizer & mean & stddev & median \\ \toprule
     Google (1)  & 3833 ms & 4271 ms & 1725 ms  \\ 
     Sphinx (2)  & 324 ms & 705 ms & 170 ms \\ 
-    Google+Sphinx (3)  & ms & ms & ms \\ 
+    Google+Sphinx (3)  & 3184+324 ms 4030+705 & ms & 1290+170 ms \\ 
     Google+Sphinx (4)  & ms  & & \\ 
     Google+Sphinx (5)  & ms  & &\\ \bottomrule   
     \end{tabular}
