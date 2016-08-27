@@ -1,19 +1,25 @@
 \chapter*{Abstract}
-In recent years, Automatic Speech Recognition (ASR) systems have improved
-increasingly. However, often such systems work non-incrementally, producing 
-the end result after the utterance is already finished. For applications, where intermediate system reactions of ASRs are desirable,  
-incremental output of the intermediate results becomes increasingly important. Benefits of  incremental speech recognition 
-include post-processing time savings, faster system feedback and more natural dialogue between humans and intelligent systems. 
-Commercial Google recognition engine, able to run in incremental mode, produces accurate results in non-specific domains,
- but demonstrates higher latency. In addition Google results provide no  timing information for the words, occurring in  the recognized sentences. 
- Forced alignment, absent in Google, is of great importance for dialogue systems, involving non-verbal recognition.  
-Non-commercial open source Sphinx-4 system, on the other hand, demonstrates very short delays and can be timed to specific applications, but is 
-less reliable in accuracy. This master thesis investigates the possibilities of Google+Sphinx combination within the frames of Incremental Spoken Dialogue 
-Processing Toolkit (InproTK). The central part of the the proposed architecture is a Incremental Unit (IU) module, which guarantees that Google incremental 
-results are passed to Sphinx recognizer, working in a forced-alignment mode. Google+Sphinx alignment results as well as the results of Google and Sphinx 
-alone are to be evaluated against the gold standard. Furthermore, we propose approaches,allowing combination of alignment and recognition within  Google+Sphinx 
-architecture. The main focus of the analyses is the Sphinx-4 SearchGraph path alternations strategies. 
-Finally, we discuss the problems of timeliness results evaluation.
+% In recent years, Automatic Speech Recognition (ASR) systems have improved
+% increasingly. However, often such systems work non-incrementally, producing 
+% the end result after the utterance is already finished. For applications, where intermediate system reactions of ASRs are desirable,  
+% incremental output of the intermediate results becomes increasingly important. Benefits of  incremental speech recognition 
+% include post-processing time savings, faster system feedback and more natural dialogue between humans and intelligent systems. 
+% Commercial Google recognition engine, able to run in incremental mode, produces accurate results in non-specific domains,
+%  but demonstrates higher latency. In addition Google results provide no  timing information for the words, occurring in  the recognized sentences. 
+%  Forced alignment, absent in Google, is of great importance for dialogue systems, involving non-verbal recognition.  
+% Non-commercial open source Sphinx-4 system, on the other hand, demonstrates very short delays and can be timed to specific applications, but is 
+% less reliable in accuracy.
+This master thesis investigates the possibilities of Google+Sphinx combination within the frames of Incremental Spoken Dialogue 
+Processing Toolkit (InproTK). By contrast to Google the combination of
+Google+Sphinx returns timing information, which is of great importance to
+dialogue systems, involving non-verbal recognition. The central part of the the
+proposed architecture is a Incremental Unit (IU) module, which guarantees that Google incremental results are passed to 
+Sphinx recognizer, working in a forced-alignment mode. Google+Sphinx alignment results as well as the results of
+Google and Sphinx alone are evaluated against the gold standard, using
+timing metrics. Furthermore, we propose approaches, allowing combination of
+alignment and recognition within  Google+Sphinx architecture. The second aspect
+of the analyses is the Sphinx-4 search graph path alternations strategies.
+Finally, we discuss the problems of timing and timeliness results evaluation.
 
 % In recent years, Automatic Speech Recognition (ASR) systems have improved
 % increasingly, being used in everyday applications: Siri, Google ASR However,
@@ -39,4 +45,15 @@ Finally, we discuss the problems of timeliness results evaluation.
 
 \begin{otherlanguage}{ngerman}
 \section*{Zusammenfassung}
+Diese Masterarbeit untersucht die Möglichkeiten Google+Sphinx im Rahmen von Incremental Spoken 
+Dialogue Processing Toolkit (InproTK) zu kombinieren. Im Vergleich zu Google die Kombination Google+Sphinx 
+liefert  zeitliche Information, die sehr wichtig für Dialogsystemen mit
+non-verbal Erkennung ist.  Das zentralen Teil von vorgestelltem Architektur ist 
+Incremental Unit (IU) Modul, das garantiert, dass die incrementelle Google
+Ergebnisse werden an Sphinx Erkenner, gestartet  im forced alignenment Modus,
+weiter geleitet. Ergebnisse sowie von Google+Sphinx, als auch von Google und
+Sphinx allein werden gegen gold Standard evaluiert, dabei werden zeitliche
+Metriken benutzt. Weiterhin, we schlagen vor die Vorgehensweise, um die Kombination von Alignment und Erkennung in Rahmen von Google+Sphinx Architektur zu gewährleisten. Der zweiten Aspekt von Analyse sind
+die Strategien, die erlauben der Pfad im Sphinx-4 Suchgraph zu ändern. Zum
+Schluss werden die Problemen von zeitlichen Ergebnissen besprochen.
 \end{otherlanguage}

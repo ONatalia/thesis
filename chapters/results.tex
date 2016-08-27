@@ -5,25 +5,43 @@ For testing purposes  a corpus of  Verbmobil-Data (dialogues about meeting
 appointments)  is available.  Each record contains audio file, used by the recognizer as input in
 one of the configurations,  and \textit {gold standard}
 with the true words from the audio, including true alignments.  Depending on the program configuration 
- the following types of outputs were compared:
+ the following types of outputs were available for evaluation:
 \begin {enumerate}
   \item Google incremental output (1).
-  \item Sphinx incremental output: Sphinx in recognition mode, using available
-  language model (2).
+  \item Sphinx incremental output: Sphinx in recognition mode, using verbmobil
+  or simplified language language model (2).
   \item Google+Sphinx: Sphinx in forced alignment mode after Google
   incrementally, alignment of the incremental results as described in the
   chapter \ref {chap:implem} (3).
   \item Google+Sphinx: Sphinx in forced alignment and recognition mode,
   combined alignment and phone loop grammar (4).
   \item Google+Sphinx: Sphinx in forced alignment and recognition mode,combined
-  alignment grammar and the same language model as in item number 1 (5). 
+  alignment grammar (5). 
 \end{enumerate}
+Alignment quality and timeliness were evaluated with the help of InTELiDA
+(Incremental Timing Evaluation of Linguistic Data), providing \textit {perl} modules and a graphical
+user interface for incremental data analysis \parencite {baumann2013:phd}. For
+alignment quality analyses a Perl program, that computes the \textit {mean,
+standard deviation and RMSE} as described in the chapter
+\ref{chap:terms} was used. Timeliness metrics FO and FD were
+evaluated, using graphical application of InTELiDA - \textit {interactivetool.pl}. 
+
 \section {Test Results} 
 \subsection {Alignment quality}
-Results of the alignment quality analyses in shown in the following tables.  The
-first table \ref{tab:alignment_non_increm_ms} shows results for matches and
-substitutions, whereas the table \ref{tab:alignment_non_incr_m} shows results
-only for matches. 
+Results of the alignment quality analyses are shown in the following tables.
+For analyses of the timing quality only Google+Sphinx in the forced alignment mode
+was used. The first table \ref{tab:alignment_non_increm_ms} shows results for
+matches and substitutions, whereas the table \ref{tab:alignment_non_incr_m}
+shows results only for matches. Evaluation results for single files could be
+found in the appendix \ref{chap:appC}. 
+
+The quality of alignment, using Google+Sphinx has at least 400 \% increased,
+whereas the the errors for \textit {mean, standard deviation and RMSE} are within the range of
+400 ms. The results of Google+Sphinx are comparable with the results of Sphinx
+alone. The small difference between Sphinx+Google and Google is explained by the
+fact that the length of audio input, passed to Sphinx together with Google
+hypotheses is not always precisely computed. For future there should be
+considered a more sophisticated algorithm to compute the offset of Google. 
 \begin {table}
 \label{tab:alignment_non_increm} 
 \begin{center}
@@ -32,11 +50,12 @@ different configurations.}
     \begin{tabular}{l  c  c  c }
    \toprule
     Recognizer & mean & stddev & RMSE \\ \toprule
-    Google (1)  & 1301 ms &  663 ms & 1533 ms \\ 
-    Sphinx (2)  & 121 ms & 129 ms & 194 ms \\ 
-    Google+Sphinx (3)  &  328  ms & 269 ms &  399 ms \\ 
-    Google+Sphinx (4)  & ms & ms & ms \\ 
-    Google+Sphinx (5)  & ms & ms & ms \\ \bottomrule  
+    Google (1)  & 1398 ms &  775 ms & 1672 ms \\ 
+    Sphinx (2)  & 154 ms & 167 ms & 238 ms \\ 
+    Google+Sphinx (3)  &  348  ms & 308 ms &  387 ms \\ 
+    %Google+Sphinx (4)  & ms & ms & ms \\ 
+    %Google+Sphinx (5)  & ms & ms & ms \\ 
+    \bottomrule  
     \end{tabular}
 \end{center}
 \end {table}
@@ -49,11 +68,11 @@ in different configurations.}
     \begin{tabular}{l  c  c  c }
    \toprule
     Recognizer & mean & stddev & RMSE \\ \toprule
-    Google (1)  & 1378 ms & 621 ms & 1619 ms \\ 
+    Google (1)  & 1471 ms & 680 ms & 1735 ms \\ 
     Sphinx (2)  & 167 ms & 360 ms & 320 ms \\ 
-    Google+Sphinx (3)  & 291 ms &  199 ms &  401 ms \\ 
-    Google+Sphinx (4)  & ms & ms & ms \\ 
-    Google+Sphinx (5)  & ms & ms & ms \\ \bottomrule  
+    Google+Sphinx (3)  & 288 ms &  212 ms &  401 ms \\ 
+    %Google+Sphinx (4)  & ms & ms & ms \\ 
+    %Google+Sphinx (5)  & ms & ms & ms \\ \bottomrule  
     \end{tabular}
 \end{center}
 \end {table}
@@ -68,31 +87,36 @@ configurations.}
     Google (1)  & ms & ms & ms \\ 
     Sphinx (2)  & ms & ms & ms \\ 
     Google+Sphinx (3)  & ms & ms & ms \\ 
-    Google+Sphinx (4)  & ms & ms & ms \\ 
-    Google+Sphinx (5)  & ms & ms & ms \\ \bottomrule  
+    %Google+Sphinx (4)  & ms & ms & ms \\ 
+    %Google+Sphinx (5)  & ms & ms & ms \\ 
+    \bottomrule  
     \end{tabular}
 \end{center}
 \end {table}
 \subsection {Timeliness quality}
+Results of the timeliness quality analyses are shown in the tables below.
+The first table \ref{tab:FO} shows results for
+FO, whereas the table \ref{tab:FD} shows results for FD. 
 \begin {table}
-\label{tab:alignment_incr} 
+\label{tab:FO} 
 \begin{center}
 \caption {Timeliness quality of the recognizer in different configurations. FO
 results.}
     \begin{tabular}{ l  c  c  c }
     \toprule
     Recognizer & mean & stddev & median \\ \toprule
-    Google (1)  & 3333 ms & 3715 ms &  1480 ms\\
-    Sphinx (2)  &284 ms & 709 ms & 130 ms \\
-    Google+Sphinx (3)  & 3333+284 ms & 3715+709 ms & 1480+130 ms \\ 
-    Google+Sphinx (4)  & ms & & \\ 
+    Google (1)  & 3202 ms & 3744 ms &  1466 ms\\
+    Sphinx (2)  &175 ms & 445 ms & 130 ms \\
+    Google+Sphinx (3)  & 2742 ms +offset  & 3787 ms + offset & 1000 ms + offset 
+    \\
+    %Google+Sphinx (4)  & ms & & \\ 
     Google+Sphinx (5)  & ms & &  \\ \bottomrule  
     \end{tabular}
 \end{center}
 \end {table}
 
 \begin {table}
-\label{tab:alignment_incr} 
+\label{tab:FD} 
 \begin{center}
 \caption {Timeliness quality of the recognizer in different configurations. FD
 results.}
@@ -100,10 +124,11 @@ results.}
     %\hline
     \toprule
     Recognizer & mean & stddev & median \\ \toprule
-    Google (1)  & 3833 ms & 4271 ms & 1725 ms  \\ 
-    Sphinx (2)  & 324 ms & 705 ms & 170 ms \\ 
-    Google+Sphinx (3)  & 3184+324 ms 4030+705 & ms & 1290+170 ms \\ 
-    Google+Sphinx (4)  & ms  & & \\ 
+    Google (1)  & 3702 ms & 4263 ms & 1705 ms  \\ 
+    Sphinx (2)  & 213 ms & 445 ms & 150 ms \\ 
+    Google+Sphinx (3)  & 2857 ms + offset & 3788 ms + 
+    offset   & 1259 ms + offset \\
+    %Google+Sphinx (4)  & ms  & & \\ 
     Google+Sphinx (5)  & ms  & &\\ \bottomrule   
     \end{tabular}
 \end{center}

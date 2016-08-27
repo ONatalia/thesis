@@ -1,5 +1,5 @@
 \chapter{Architecture of CMU Sphinx-4 as an Example of a typical ASR}
-\label{chap:sphinx}
+\label{ch:sphinx}
  \section {Overview} 
 CMU Sphinx represents a classical speech recognizer, including the following
 main components: frontend, decoder and knowledge base with language and acoustic
@@ -39,8 +39,8 @@ representation and transcription with alignment of the phrase \textit {ich danke
 \end {figure}
 
 Finally, with the help the sound spectral representation acoustic vectors of
-features Y are created. One of the most commonly used for this purpose method is a mel frequency
-cepstrum (MFC). This method calculates coefficients representing the amplitudes
+features \textit {Y} are created. One of the most commonly used for this purpose
+method is a mel frequency cepstrum (MFC). This method calculates coefficients representing the amplitudes
 of the resulting spectrum, so-called mel frequency cepstrum coefficients (MFCC).
 Resulting acoustic vectors of features are used as a representation of a sound waveform, forwarded to the decoder for recognition  \parencite
 {jurafskymartin2009}.
@@ -166,12 +166,19 @@ public <numbers> = ( eins | zwei | drei | vier | fünf |
   \label{fig:grammar}
 \end {figure}
 
-Here also some words about Aligner Grammar for forced-alignment. 
-
+N-gram grammar in Sphinx-4 is build from all the words, containing in the
+language model. By contrast aligner grammar allows to create a search graph,
+containing only one search path in accordance with the text be set for forced
+alignment. For example, if we have a text \textit {Ich danke Ihnen und wir
+sehen uns dann} we get a search graph, containing  a starting node and and the
+nodes \textit{ich}, \textit {danke},\textit{Ihnen}, \textit{und}, \textit {wir}
+\textit {sehen}, \textit{uns}, \textit {dann}, connected with each other in one
+simple path.
 \section {Dictionary} 
 
 Pronunciation dictionary belongs to the knowledge base of Sphinx-4. It is made
-of all occurred in the application words and their transcriptions. Pronunciation dictionary is used by the decoder during word identification as a reference. 
+of all occurred in the application words and their transcriptions. Pronunciation dictionary is used by the decoder 
+during word identification as a reference. 
 A typical transcription file is shown in the figure \ref {fig:dic}.
 \newline
 \begin{figure}[htbp]
@@ -205,7 +212,9 @@ Südfrankreich	z y: t f r a N k r aI C
 zerteilen	t s E 6 t aI l n
 \end{lstlisting}
  \caption{An extract from the dictionary file. For correspondence between
- Sphinx-4 representation and German phonemes see appendix \ref{chap:appA}. }
+ Sphinx-4 representation and Internation Phonetic Alphabet (IPA) see appendix
+ \ref{chap:appA}.
+ }
   \label{fig:dic}
 \end {figure}
 \newline
@@ -237,7 +246,7 @@ sentences W in the language L given some acoustic input Y? }
 \end {center}
 In the terms of mathematics we are dealing with an optimisation problem,
 formulated with a Bayes decision rule \parencite {jurafskymartin2009}:
-\[w_opt = argmax P(W|Y ) = \frac {P(Y |W)P(W)} {P(Y)} = argmax P(Y |W)P(W)\]
+\[w_{opt} = argmax P(W|Y ) = \frac {P(Y |W)P(W)} {P(Y)} = argmax P(Y |W)P(W)\]
 
 Decoder solves the above optimisation problem, involving complicated search algorithms. One of the most commonly used for speech recognition algorithm is 
 Viterbi algorithm. Viterbi is a dynamic programming search algorithm. It traverses the network of HMM states and 
@@ -254,7 +263,7 @@ finds the path with the best score.
 Abstract representation of the Viterbi algorithm is shown in the in the figure 4.7. One axis represent states in the HMM network, another time.
  Arrows means transitions through the network. Each point in this 2-D space represents the best path probability for the corresponding state at that time. 
  Every state has a best predecessor and starting from the final state and using backtracking it is possible to find the best path sequence for the whole search.
-Complexity of Viterbi algorithm is equal $\mathcal{O}(N2T)$, where N
+Complexity of Viterbi algorithm is equal $\mathcal{O}(N2T)$, where $N$
 is the total number of states and T is the total duration \parencite
 {Ravishankar96efficientalgorithms}. In Sphinx-4 Viterbi search is implemented as
 \textit {token passing algorithm} \parencite {Young89Token}. 
@@ -279,11 +288,13 @@ and ``two'' is shown in the figure \ref{fig:hmm}.
 \end {figure}
 
 The main types of Linguist in Sphinx-4 are: flat linguist, dynamic flat linguist
-and lex tree linguist. 
+and lex tree linguist. Flat linguist is a simple version of Linguist, commonly
+used in combination with JSGF or aligner grammar.  Dynamic flat linguist is a
+dynamic version of flat linguist, which is more efficient in the terms of memory usage and start up time.
+Lex tree linguist is also a dynamic version of linguist, appropriate for large
+vocabularies and using lexical trees, built from n-gram grammars. 
 
-\subsection {Flat Linguist} 
-\subsection {Dynamic Flat Linguist} 
-\subsection {Lex Tree Linguist} 
+
 
 
 

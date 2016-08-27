@@ -1,5 +1,43 @@
-\chapter{Conclusion}
+\chapter{Discussion}
+
+\ldots to be done 
+I don't really know what I should write here.
+
+
 \label{chap:concl}
 \section {Conclusion}
-\section {Discussion}
-\section {Future Work}
+This master thesis has presented a prototypical solution for incremental speech
+recognizer combination of Google and Sphinx. 
+%The described implementation has shown a better timing in comparison to Google.
+% 
+
+Incremental speech recognizer is possible to run in 2 modes: alignment only and
+alignment + recognition. Incremental results, coming from Google, have been
+aligned using forced alignment IU module and Sphinx ASR. Evaluation of
+alignment  results quality have shown that Google + Sphinx combination produces
+missing in Google alone timing information. The quality of Google+Sphinx
+alignment is comparable to the alignment of the Sphinx alone. Under the
+assumption that processing time of Sphinx, which depends on computational power,
+could have been neglected, Google+Sphinx in the alignment mode is competitive
+with Google in its performance. 
+
+To overcome the Google latency two 2 approaches have been tested.  The first one
+uses a combination of alignment and JSGF grammar. The second one combines the
+alignment and n-gram grammars.  In both cases the search graph consists of two
+connected parts. The first part  represent results, coming from Google.
+The second contains the nodes, reconstructed from the
+corresponding grammar types. Moreover the tests have proved that, using a n-gram
+grammar it is possible to reduce the search space in the second part of the
+graph by modifying the search path, depending on Google hypotheses. 
+
+Finally, timeliness of Google, Sphinx and Google+Sphinx results have been
+analysed. Evaluation has shown that Google+Sphinx in alignment+recognition mode
+has shown an improvement in comparison to Google alone and Google+Sphinx in
+alignment mode. Timeliness quality growth in alignment+recognition mode is
+explained by the possibility of Google+Sphinx to deliver intermediate
+recognition results while waiting for Google hypotheses. 
+
+\section {Future Prospects}
+\ldots to be done
+Timo, probably you could give me some hints. 
+

@@ -6,11 +6,12 @@ an open-source project \textit {Incremental Spoken Dialogue processing
 Toolkit} (InproTK), developed by the Universities of Potsdam, Bielefeld and
 Hamburg. InproTK includes modules for speech recognition, speech understanding,
 speech processing and dialogue management. Speech recognition module is based on
-implemented Java Sphinx-4 recogniser, a package of CMUSphinx speech recognition toolkit. 
+implemented Java Sphinx-4 recogniser, a package of CMU Sphinx speech recognition
+toolkit.
 \section {IU Modules and Data Processing}
 \textit {Incremental Units} (IUs) are minimal information units in InptoTK.
-IUs are different in the level abstraction (from low to high) and capable of
-describing different types of information (phonemes, words, phrases, ...). IUs
+IUs varies in the level abstraction (from low to high) and capable of
+describing diverse types of information (phonemes, words, phrases, ...). IUs
 of different abstraction levels form a IU network. An example of IU hierarchy is
 shown in the figure.
 \begin{figure}[htbp]
@@ -31,7 +32,7 @@ communication between two IU modules is shown in the figure \ref{fig:IUs}.
  buffers \parencite {baumann2013:phd}.}
   \label{fig:IUs}
 \end {figure}
-\section {INproTK IU Modules in Sphinx+Google Recognizer Architecture}
+\section {INproTK IU Modules in Google+Sphinx Recognizer Architecture}
 \subsection  {Google IU Module}
 GoogleASR is a source IU module in InproTK, which listens to the
 results coming from Google's  downstream connection in JavaScript Object Notation (JSON) format and
@@ -67,9 +68,9 @@ a network delay.
       \label{fig:json_ouput}
 \end{figure}
 \subsection {Sphinx ASR Module and Label Writer in INproTK}
-Sphinx ASR in INproTk is module that receives results from Sphinx-4
+Sphinx ASR in INproTk is a module that receives results from Sphinx-4
 recognizer, transforms them to IUs of recognized words and sends them
-to Label writer IU.   Label writer in its turn
+to label writer IU.   Label writer in its turn
 is responsible for output of the recognition results and  their timing
 information in the console. Apart from that Label writer  offers a configurable
 option to save the recognition and timing results to a file. An extract of such
@@ -100,7 +101,7 @@ is transferred to forced alignment IU via standard IU left-right buffer. Google
 ASR result contains hypothesis, and the start and end times, computed by Google
 ASR for every hypothesis. 
 
-forced alignment IU puts every incremental Google result into synchronous
+Forced alignment IU puts every incremental Google result into synchronous
 blocking queue. Sphinx control thread takes the last Google hypothesis from the
 synchronous blocking queue and starts Sphinx decoding. Sphinx control thread
 updates language model, resetting text for alignment. As soon as the grammar of
@@ -144,12 +145,12 @@ approach the processing time will grow quadratically (?) and the quality of
 alignment will decrease. So the more accurate file length  matches the
 transcription the better are the alignment results. 
 
-\subsection {forced alignment Mode of the Sphinx+Google Recognizer}
+\subsection {Forced Alignment Mode of the Google+Sphinx Recognizer}
 
 Sphinx-4 in its standard implementation is able to do either alignment or
 recognition. Sphinx-4 Linguist example configuration, required for alignment, is
 shown in the figure \ref{fig:conf_al}. As it is seen from the example in the
-Sphinx+Google recognizer uses dynamic flat linguist and aligner grammar. 
+Google+Sphinx recognizer uses dynamic flat linguist and aligner grammar. 
 
 \begin{figure}[htbp]
   \centering 
@@ -179,8 +180,8 @@ Sphinx+Google recognizer uses dynamic flat linguist and aligner grammar.
     </component>
 ...
 \end{lstlisting}
- \caption{An Extract from the configuration file for Google+Sphinx recognizer in
- alignment mode.}
+ \caption{An extract from the configuration file for Google+Sphinx recognizer in
+ the alignment mode.}
   \label{fig:conf_al}
 \end {figure}
 
@@ -188,10 +189,10 @@ Timing results of Sphinx, started after Google, are shown in the figure below
 (\ref{fig:conf_al_timing}):
 \begin{figure}[htbp]
   \centering
-    \includegraphics[width=1.0\textwidth]{images/google_sphinx_output_al.png}
- \caption{Google+Sphinx output with improvement timing. Vertical lines shows
+    \includegraphics[width=1.0\textwidth]{images/gsphal.png}
+ \caption{Google+Sphinx output with improved timing. Vertical lines show
  the time, by which Google was ready with the corresponding hypothesis.
- Right borders of the dotted boxes shows at what point of time Sphinx was ready
+ Right borders of the dotted boxes show at what point of time Sphinx was ready
  with its alignment.}
   \label{fig:conf_al_timing}
 \end {figure}
@@ -199,8 +200,8 @@ Timing results of Sphinx, started after Google, are shown in the figure below
 Comparison of visualization results with the corresponding Google
 output (\ref{fig:google_ouput}) demonstrates qualitative timing improvement in terms
 alignment quality, whereas the WER remains unchanged, as the output contains
-the same result as that of Google alone. The number of hypotheses is smaller,
-because Sphinx gets incremental results for processing only when
+the same final result as that of Google alone. The number of hypotheses is
+smaller, because Sphinx gets incremental results for processing only when
 forced alignment of one result is finished.  If during Sphinx processing time
 Google produce additional hypotheses, these hypotheses are skipped and only the
 last one is taken for new processing. 
@@ -213,7 +214,7 @@ time depends on the processing power. If the Sphinx processing time could have
 been neglected, than we get an model of Google+Sphinx recognizer,
 comparable to Google in WERs and having an improved timing.
 
-\subsection {Alignment + Recognition Mode  of the Sphinx+Google Recognizer}
+\subsection {Alignment + Recognition Mode  of the Google+Sphinx Recognizer}
 
 In the second approach Sphinx returns not only alignment result, based on Google
 ASR, but continues with recognition, while waiting for the new Google incremental result. 
@@ -226,12 +227,21 @@ hypotheses. Third, it possible to use the Google result to manipulate the search
 path in search graph of Sphinx and theoretically change to a path proposed by
 Google, if this path exist. 
 
-Configuration of Sphinx+Google recognizer in alignment and recognition mode
+Configuration of Google+Sphinx recognizer in alignment and recognition mode
 uses dynamic flat linguist, because of the  advantages, described in the chapter
-\label{ref:sphinx}. As a grammars the following types were tested: JSGF grammar
-and n-gram Gram, based on default language model.  However, by contrast to standard Grammar
-implementation in Sphinx these grammars are combined with alignment grammar in
-their implementation.
+\ref{ch:sphinx}. As grammars the following types were tested: JSGF grammar
+and n-gram grammar.  However, by contrast with
+standard grammars in Sphinx these grammars are combined with alignment grammar 
+in their implementation. 
+
+As language models two types of language models were
+available. The first one is  verbmobil language model, generated from the
+selected number of texts from verbmobil domain with  4604 1-grams,38548 2-grams
+and 80671 3-grams. The second one is a simplified language model, generated
+only from the transcriptions, contained in the test data with 146 1-grams,
+248 2-grams and 342 3-grams. The simplified language model is also runnable in
+combination with flat linguist. Whereas  with the flat linguist and the bigger language model the 
+application runs out of memory. 
 
 
 \begin{figure}[htbp]
@@ -268,9 +278,19 @@ their implementation.
   \label{fig:conf_al_rec}
 \end {figure}
 
-
-\ldots How the grammar are combined write here in some more details with example
-probably. 
+The grammars are combined in the following way. The first node is
+starting node. After the starting node there is a path, consisting of nodes,
+built from a set text (see figure  \ref{fig:graph}). The last alignment
+node is connected to multiple paths in the second part of the graph, build from n-gram
+or JSGF grammar. The last node of the graph is the end node.
+\begin{figure}[htbp]
+  \centering
+    \includegraphics[width=1.0\textwidth]{images/searchgraph.png}
+ \caption{Schematic representation of the search graph of Google+Sphinx
+ recognizer in combined mode. In the example the text set for alignment is
+ \textit {ich danke}.}
+  \label{fig:graph}
+\end {figure}
 
 \subsection {Alignment + Recognition with JSGF Grammar}
 To demonstrate that alignment and recognition are able to be combined any
@@ -304,55 +324,139 @@ p| r | s |  t | u | u: | v | x | y: | z)*;
 \end {figure}
 
 Described phone-loop grammar is prototypical and uses no weights. Result of the
-recognition of audio with transcription \textit {eins zwei drei
-vier}, using the phone-loop grammar   \ref{fig:phone_loop} are shown in the
+recognition of audio with transcription \textit {ich danke ignen und wir sehen
+uns dann}, using the phone-loop grammar   \ref{fig:phone_loop} are shown in the
 figure \ref{fig:phone_loop_res}.
 \begin{figure}[htbp]
  \centering 
 \begin{center}
 \begin{lstlisting}[frame=single]
-0.000	0.680	ein
-0.430	1.030	zwei
-0.720	0.760	<sil>
-0.860	0.890	<sil>
-0.890	0.920	<sil>
-0.920	1.010	c
-1.010	1.070	i
-1.070	1.120	6
-1.120	1.200	i
-1.200	1.310	e
-1.310	1.420	sil
-1.420	1.610	e
-1.610	1.670	l
-1.670	1.720	i
-1.720	1.990	l
-1.990	2.040	p
-2.040	2.140	p
-2.140	2.340	i
-2.340	2.490	e
-2.490	2.580	6
-2.580	2.640	r
-2.640	2.710	sil
-2.710	2.780	<sil>
-
-
+0.000	0.110	<sil>
+0.110	0.340	ich
+0.340	0.610	danke
+0.610	1.050	ihnen
+1.050	1.190	<sil>
+1.190	1.230	r
+1.230	1.290	o
+1.290	1.400	o:
+1.400	1.450	n
+1.450	1.520	m
+1.520	1.560	i
+1.560	1.610	l
+1.610	1.650	s
+1.650	1.690	@
+1.690	1.730	n
+1.730	1.800	o
+1.800	1.840	n
+1.840	1.890	s
+1.890	1.930	h
+1.930	1.980	a
+1.980	2.050	n
+2.050	2.090	b
+2.090	2.140	i
+2.140	2.180	m
+2.180	2.220	o
+2.220	2.280	v
+2.280	2.290	e
 \end{lstlisting}
 \end{center}
 %\includegraphics[width=0.5\textwidth]{images/dic.png}
  \caption{Alignment + Recognition result, using combined grammar, based on
- fixed input ``eins zwei'' and phone-loop JSGF grammar for the audio, having
- transcription ``eins zwei drei vier'' (\ref{fig:phone_loop_res}).}
- 
+ fixed input ``ich danke ihnen'' and phone-loop JSGF grammar for the audio,
+ having transcription ``ich danke ihnen und wir sehen uns dann''
+ (\ref{fig:phone_loop_res}).}
   \label{fig:phone_loop_res}
+\end {figure}
+Combination of alignment grammar with phone-loop JSGF grammar shows, that it is
+possible to get some faster results from Sphinx, after the Google path is
+already finished. At the moment the new result from Google is not yet
+considered, because it is either not there due to latency or because the
+processing of the audio is still running. 
+%An example of the output, using such a
+%grammar is shown in the picture \ref {fig: to do}. 
+
+\ldots here also some comments to the picture above
+
+However, an obvious disadvantage of the above described approach that it is not 
+possible to get use of the already recognized result, produced by Google as two
+grammars (alignment and JSGF) are practically independent from each other.
+Google produce always finished words or phrases as incremental output, followed
+by silence. If the Google hypotheses were unfinished words it would possible to
+look in the JSGF Grammar for the most possible words endings. In our case
+however,the only way to improve the recognition quality in the combination is to improve
+the quality of phone-loop grammar output. For future there should be considered a
+possibility to develop a more sophisticated grammar, based on phones
+frequency and alternation rules generally in the language and in the selected
+vocabulary in particular. 
+\subsection {Alignment + Recognition with N-Gram Grammar}
+The second approach to the combination of Google+Sphinx in alignment
+and recognition mode presupposes the use of the implemented mixed grammar, based
+on standard alignment and n-gram grammar of CMU Sphinx.  The search graph built
+from this grammar looks as depicted in the figure \ref{fig:graph}, whereas the
+first part of the graph is build from the set text string and the second part of
+the graph is created on the basis of the n-gram grammar, loaded from the default
+language model. 
+
+In the first case, when in the second part of the graph there is no path,
+proposed by Google, the last node of first part of the graph is connected with the
+starting node in the second search graph. In the second case, when there is a
+path, proposed by Google, the last node in the first part of the graph  is
+deleted and second last node is connected to the a branch node in the second
+part of the graph, that equals to the deleted last node in the first part of
+the graph. 
+
+In the present implementation when new text string is set  the
+condition is checked if the whole path, proposed by the Google hypotheses exists in the second part of the
+graph, build from n-gram grammar. For  example, if the set text equals \textit
+{ich danke} the next node could be the first node of the whole second graph or the node 
+\text {ich} is connected to the node \textit {danke} in the second search graph.
+Additionally the existence of the whole path  \textit
+{ich danke} in the graph is checked. 
+
+Result of the recognition of audio with transcription \textit {ich danke ihnen
+und wir sehen uns dann}, using n-gram grammar   is shown in
+the figure  \ref{fig:ngram_res}.
+
+\begin{figure}[htbp]
+ \centering 
+\begin{center}
+\begin{lstlisting}[frame=single]
+0.000	0.110	<sil>
+0.110	0.300	ich
+0.300	0.400	sage
+0.400	0.610	danke
+0.610	1.020	ihnen
+1.020	1.470	und
+1.470	1.590	wir
+1.590	1.750	sehen
+1.750	1.880	uns
+1.880	2.290	dann>
+\end{lstlisting}
+\end{center}
+%\includegraphics[width=0.5\textwidth]{images/dic.png}
+ \caption{Alignment + Recognition result, using combined grammar, based on
+ fixed input ``ich sage danke'' and n-gram grammar and simplified language
+ model for the audio, having transcription ``ich danke ihnen und wir sehen uns
+ dann'' (\ref{fig:phone_loop_res}).}
+  \label{fig:ngram_res}
 \end {figure}
 
 
-\subsection {Alignment + Recognition with N-Gram Grammar}
+
+
+
+
+
+
+
+
+
+
 
 
 
 %\section {forced alignment mode versus }
-\section {Timeliness Improvement}
+
 
 
 
@@ -367,6 +471,3 @@ figure \ref{fig:phone_loop_res}.
 % by Google incremental result. The last means that we get the same final results
 % for Google and Google + Sphinx, but timeliness of Google + Sphinx
 %is expected to be improved. 
-\section {Search Module of Google-Sphinx Recognizer}
-\subsection {Decoder configuration}
-\subsection {Search Modification}

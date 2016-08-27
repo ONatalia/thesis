@@ -27,7 +27,7 @@
   \usepackage[utf8]{inputenc}
    \usepackage {lscape}
    \usepackage{booktabs}
-
+\usepackage{amsmath}
   \usepackage{colortbl} % f�r farbige Tabellen
 	\usepackage{longtable} % f�r mehrseitige Tabellen
 %	\usepackage{booktabs} % f�r tabellen: baut \midrule, \toprule und \bottomrule ein
@@ -177,19 +177,21 @@
 \pagenumbering {roman}
 \input{chapters/abstract}
 \tableofcontents
+\newpage
 \input{chapters/introduction}
-\pagenumbering {arabic}
+ \pagenumbering {arabic}
 \input{chapters/stateoftheart}
 \input{chapters/terms}
 \input{chapters/sphinx}
 \input{chapters/implementation}
-\input{chapters/results}
-\input{chapters/conclusion}
-\begin{appendix}
-\input{chapters/appA}
- %\end{appendix}
- %\begin{appendix}
-\input{chapters/appB}
+ \input{chapters/results}
+ \input{chapters/conclusion}
+ \begin{appendix}
+ \input{chapters/appA}
+ \input{chapters/AppC} 
+%  %\end{appendix}
+%  %\begin{appendix}
+ \input{chapters/appB}
  \end{appendix}
 \newpage
 \phantomsection % ben�tigt f�r korrekte pdf-darstellung
@@ -199,4 +201,3 @@
 \listoftables
 \input{chapters/declaration} 
 \end{document}
-%

@@ -10,12 +10,21 @@ where intermediate system reactions of ASRs are
 desirable,  incremental output of the intermediate results becomes increasingly
 important. Benefits of  incremental speech recognition include post-processing
 time savings, faster system feedback and more natural dialogue between humans
-and intelligent systems. Commercial Google recognition
+and intelligent systems. 
+
+Commercial Google recognition
 engine, working in incremental mode, produces accurate
 results in non-specific domains, but demonstrates higher latency
 \parencite{mcgrawgrauenstein2012}.  Non-commercial open source systems, like Sphinx-4, on the other hand, demonstrate very short delays and can be timed to specific
 applications, but are less reliable in accuracy.
-The challenge is to combine the advantages of both systems and  to overcome the latency problem of Google-ASR.
+
+Moreover, Google results lacks timing information that can a great
+benefit, for example, in robotics environment. In such kind of applications it
+is often important to know at what time a particular word was said to relate and
+refer the objects correctly to other non-verbal information, like gestures.
+The challenge is to combine the advantages of both systems and to enrich
+the Google results with timing information and try to overcome the latency
+problem of Google ASR.
 \section {Problem Statement}
 The aim of this master thesis is to investigate the possibility of
 timeliness and timing improvement of Google ASR
@@ -28,22 +37,30 @@ combination of Google ASR \parencite
 The following objectives states, how the aim of the master thesis is going to be
 addressed:
  \begin  {itemize}
-   \item to forced align incremental results,coming from Google ASR, using a
-   combination of Google and Sphinx ASRs
-   \item to evaluate timing results of forced-alignment, comparing Google
-   alone, Sphinx alone and Google + Sphinx combination, using evaluation metrics
-   \item to investigate the possibility for Google timeliness improvement in multiple source recogniser
+   \item to align incremental results,coming from Google ASR, using a
+   combination of Google and Sphinx ASRs,
+   \item to evaluate timing results of forced alignment, comparing Google
+   alone, Sphinx alone and Google + Sphinx combination, using evaluation
+   metrics,
+   \item to investigate the possibility for Google timeliness improvement in
+   multiple source recogniser,
    \item to evaluate results of timeliness improvement, comparing Google alone,
-   Sphinx alone and a Google + Sphinx combination
+   Sphinx alone and a Google + Sphinx combination.
  \end {itemize}
 
 
 \section {Structure}
-This master thesis is structured as follows. Chapter \ref{ch:relatedWork}
-provides review of state of the art scientific papers, related to the thesis
-topic. Chapter \ref{chap:terms} explains the terminology to be used in the
-context of this master thesis.  Chapter \ref{chap:sphinx} describes the
-architecture of CMU (Carnegie Mellon University) Sphinx-4 recognizer.
-Implementation of a Google+Sphinx recognizer is discussed in the chapter \ref{chap:implem} of this paper. Chapter \ref{chap:res} describes the
-evaluation approach and results. Chapter \ref{chap:concl} summarizes the most
-important ideas of the master thesis.
+This master thesis is structured as follows. Chapter \ref{chap:introduction}give
+a brief introduction of the research topic. Chapter \ref{ch:relatedWork}
+provides review of state of the art scientific papers, related to the topic of
+incrementality, general speech recognition and multiple source recognizers.
+Chapter \ref{chap:terms} explains the terminology to be used in the context of this master thesis.  
+In the first place there is a definition try of such terms as timing and
+timeliness an an explanation of what kind of metrics are relevant to
+evaluate their quality. Chapter \ref{ch:sphinx} describes the architecture of
+CMU (Carnegie Mellon University) Sphinx-4 recognizer as a typical ASR.
+Implementation of the Google+Sphinx recognizer is discussed in the chapter
+\ref{chap:implem} of this paper. Chapter \ref{chap:res} describes the evaluation approach and results,received for Google+Sphinx recognizer, as
+well as for Google and Sphinx alone.
+Chapter \ref{chap:concl} summarizes the most important ideas of the master
+thesis and provides some points for discussion and future work.
