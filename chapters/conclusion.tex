@@ -1,8 +1,4 @@
-\chapter{Discussion}
-
-\ldots to be done 
-I don't really know what I should write here.
-
+\chapter{Conclusion and Prospects}
 
 \label{chap:concl}
 \section {Conclusion}
@@ -38,6 +34,34 @@ explained by the possibility of Google+Sphinx to deliver intermediate
 recognition results while waiting for Google hypotheses. 
 
 \section {Future Prospects}
-\ldots to be done
-Timo, probably you could give me some hints. 
+Present implementation has shown some limitations, that could be seen
+as a task for future research.
+
+First, Google+Sphinx uses an offset, produced by Google, for the calculation of the file length, sent to 
+Sphinx for alignment. For future there should be considered a possibility to implement a data
+processor that measures how many samples of audio  have been already sent to
+Google.  These measurements as well as the first alignment results, coming from
+Google+Sphinx should be use as the basis for the calculation of the length of the audio to be sent to Google+Sphinx for 
+optimal alignment and recognition.
+
+Second, tests have shown that Sphinx+Google in alignment and recognition mode,
+using bigger language, shows drawbacks in comparison to configurations with smaller
+language models. At the same time smaller models have their limitation with the
+larger sets of data.  It order to get in improvement in implementation is is
+necessary to investigate the possibilities of less time consuming loading of
+dynamic language models.
+
+Third, present timing calculations of the Sphinx recognizer with dynamic flat
+linguist should be improved within InproTK. Such improvement will guarantee
+sequential timing labelling of the results in the first part of the graph in
+the combined mode.
+
+Moreover, for JSGF grammar there is a possibility to develop an improved
+phone-loop model and to look at the problem of the words and phonemes
+interchangeability, while doing timing and timeliness analyses. 
+
+Finally, present implementation is extendable to other types of audio formats
+apart from wave format as well as for different audio sources, such as microphone speech. 
+
+
 

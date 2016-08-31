@@ -35,17 +35,18 @@ communication between two IU modules is shown in the figure \ref{fig:IUs}.
 \section {INproTK IU Modules in Google+Sphinx Recognizer Architecture}
 \subsection  {Google IU Module}
 GoogleASR is a source IU module in InproTK, which listens to the
-results coming from Google's  downstream connection in JavaScript Object Notation (JSON) format and
-passes results to its listeners by updating the current hypotheses and providing
-information about the hypotheses time (hypotheses start and end times).
- \begin{figure}[htbp]
+results coming from Google's  downstream connection in JavaScript Object
+Notation (JSON) format (see figure \ref{fig:json_ouput}) and passes results to
+its listeners by updating the current hypotheses and providing information about the hypotheses time (hypotheses start and end times).
+
+\begin{figure}[htbp]
   \centering
-   \includegraphics[width=0.9\textwidth]{images/google_output.png}
-  \caption{Incremental output of Google ASR with existing timing.}
-  \label{fig:google_ouput}
+   \includegraphics[width=1\textwidth]{images/json_extr.png}
+    \caption{JSON file example}
+      \label{fig:json_ouput}
 \end{figure}
 
-Timing, implemented in Google ASR, has nothing to do with true alignment.
+ Timing, implemented in Google ASR, has nothing to do with true alignment.
 With the help of this information  it is only possible to calculate the
 timeliness: FO as well as FD.  Manual reconstruction of alignment from
 timeliness is problematic as timeliness does not preserve any information about word
@@ -61,18 +62,20 @@ after some internal Google offset, the output was made.
 It is assumed, that Google offset reflects the problem of stability of the
 the output and latency \parencite {mcgrawgrauenstein2012}. Finally, Google ASR returned this result after 
 a network delay.  
- \begin{figure}[htbp]
+\begin{figure}[htbp]
   \centering
-   \includegraphics[width=1\textwidth]{images/json_extr.png}
-    \caption{JSON file example}
-      \label{fig:json_ouput}
+   \includegraphics[width=0.9\textwidth]{images/google_output.png}
+  \caption{Incremental output of Google ASR with existing timing.}
+  \label{fig:google_ouput}
 \end{figure}
+
+ 
 \subsection {Sphinx ASR Module and Label Writer in INproTK}
 Sphinx ASR in INproTk is a module that receives results from Sphinx-4
 recognizer, transforms them to IUs of recognized words and sends them
-to label writer IU.   Label writer in its turn
+to label writer.   Label writer in its turn
 is responsible for output of the recognition results and  their timing
-information in the console. Apart from that Label writer  offers a configurable
+information in the console. Apart from that label writer  offers a configurable
 option to save the recognition and timing results to a file. An extract of such
 files can be found in the appendix \ref{chap:appB}. 
 
@@ -92,7 +95,7 @@ Google ASR, Sphinx ASR and label writer (see figure \ref {fig:arch}).
 As an audio input both Google ASR and Sphinx receive the same audio input.
 Input stream of Google ASR is set only once, whereas the length of
 the stream is equal to the whole audio. By contrast, the Sphinx input stream is
-updated every time, Google ASR returns a new hypothesis.  
+updated every time Google ASR returns a new hypothesis.  
 
 
 GoogleASR listens to JSON results coming from online Google, running
@@ -148,9 +151,10 @@ transcription the better are the alignment results.
 \subsection {Forced Alignment Mode of the Google+Sphinx Recognizer}
 
 Sphinx-4 in its standard implementation is able to do either alignment or
-recognition. Sphinx-4 Linguist example configuration, required for alignment, is
-shown in the figure \ref{fig:conf_al}. As it is seen from the example in the
-Google+Sphinx recognizer uses dynamic flat linguist and aligner grammar. 
+recognition. Sphinx-4 linguist example configuration, required for alignment, is
+shown in the figure \ref{fig:conf_al}. 
+Google+Sphinx recognizer could use either flat linguist or dynamic flat linguist
+together aligner grammar. 
 
 \begin{figure}[htbp]
   \centering 
@@ -166,7 +170,8 @@ Google+Sphinx recognizer uses dynamic flat linguist and aligner grammar.
  %\begin{lstlisting}  
 \begin{lstlisting}[frame=single]
 ...
-<component name="linguistFA" type=
+<!--  <component name="linguistFA"
+type="edu.cmu.sphinx.linguist.flat.FlatLinguist"> -->  
 "edu.cmu.sphinx.linguist.dflat.DynamicFlatLinguist">  
         <property name="logMath" value="logMath"/>
        <property name="grammar" value="forcedAligner"/>   
@@ -184,6 +189,16 @@ Google+Sphinx recognizer uses dynamic flat linguist and aligner grammar.
  the alignment mode.}
   \label{fig:conf_al}
 \end {figure}
+
+The restriction however, was that correct timing
+computation for dynamic flat linguist within InproTK is unimplemented. By
+contrast to flat linguist, dynamic flat linguist returns not only   word search
+states but also intermediate hmm search states, which influence the timing
+computation.  In future timing for dynamic flat linguist should be improved
+within InproTK in order to get better alignment quality with dynamic flat
+linguist. 
+
+
 
 Timing results of Sphinx, started after Google, are shown in the figure below
 (\ref{fig:conf_al_timing}):
@@ -218,31 +233,14 @@ comparable to Google in WERs and having an improved timing.
 
 In the second approach Sphinx returns not only alignment result, based on Google
 ASR, but continues with recognition, while waiting for the new Google incremental result. 
-This approach solves several tasks. First, we get more precise alignment  in
-case of excessive input stream. Moreover, excessive input stream is
+This approach solves several tasks. First, we should get more precise alignment 
+in case of excessive input stream. Moreover, excessive input stream is
 even desirable as only additional frames guarantees recognition start after
 alignment is finished. Second, Sphinx produces some results with better
 timeliness, if it has finished alignment and is waiting for new Google
 hypotheses. Third, it possible to use the Google result to manipulate the search
 path in search graph of Sphinx and theoretically change to a path proposed by
 Google, if this path exist. 
-
-Configuration of Google+Sphinx recognizer in alignment and recognition mode
-uses dynamic flat linguist, because of the  advantages, described in the chapter
-\ref{ch:sphinx}. As grammars the following types were tested: JSGF grammar
-and n-gram grammar.  However, by contrast with
-standard grammars in Sphinx these grammars are combined with alignment grammar 
-in their implementation. 
-
-As language models two types of language models were
-available. The first one is  verbmobil language model, generated from the
-selected number of texts from verbmobil domain with  4604 1-grams,38548 2-grams
-and 80671 3-grams. The second one is a simplified language model, generated
-only from the transcriptions, contained in the test data with 146 1-grams,
-248 2-grams and 342 3-grams. The simplified language model is also runnable in
-combination with flat linguist. Whereas  with the flat linguist and the bigger language model the 
-application runs out of memory. 
-
 
 \begin{figure}[htbp]
   \centering 
@@ -278,8 +276,27 @@ application runs out of memory.
   \label{fig:conf_al_rec}
 \end {figure}
 
+
+Configuration of Google+Sphinx recognizer in alignment and recognition mode
+uses dynamic flat linguist, because of the  advantages, described in the chapter
+\ref{ch:sphinx}. As grammars the following types were tested: JSGF grammar
+and n-gram grammar.  However, by contrast with
+standard grammars in Sphinx these grammars are combined with alignment grammar 
+in their implementation. Example configuration of the linguist is shown in the
+figure  \ref{fig:conf_al_rec}.
+
+
+As language models two types of language models were
+available. The first one is  verbmobil language model, generated from the
+selected number of texts from verbmobil domain with  4604 1-grams,  38548
+2-grams and 80671 3-grams. The second one is a simplified language model, generated
+only from the transcriptions, contained in the test data with 146 1-grams,
+248 2-grams and 342 3-grams. The simplified language model is also runnable in
+combination with flat linguist. Whereas  with the flat linguist and the bigger language model the 
+application runs out of memory. 
+
 The grammars are combined in the following way. The first node is
-starting node. After the starting node there is a path, consisting of nodes,
+a starting node. After the starting node there is a path, consisting of nodes,
 built from a set text (see figure  \ref{fig:graph}). The last alignment
 node is connected to multiple paths in the second part of the graph, build from n-gram
 or JSGF grammar. The last node of the graph is the end node.
@@ -375,16 +392,16 @@ processing of the audio is still running.
 %An example of the output, using such a
 %grammar is shown in the picture \ref {fig: to do}. 
 
-\ldots here also some comments to the picture above
+%\ldots here also some comments to the picture above
 
 However, an obvious disadvantage of the above described approach that it is not 
 possible to get use of the already recognized result, produced by Google as two
 grammars (alignment and JSGF) are practically independent from each other.
 Google produce always finished words or phrases as incremental output, followed
-by silence. If the Google hypotheses were unfinished words it would possible to
-look in the JSGF Grammar for the most possible words endings. In our case
-however,the only way to improve the recognition quality in the combination is to improve
-the quality of phone-loop grammar output. For future there should be considered a
+by silence. If the Google hypotheses were unfinished words it would be possible
+to look in the JSGF Grammar for the most possible words endings. In our case
+however, the only way to improve the recognition quality in the combination is
+to improve the quality of phone-loop grammar output. For future there should be considered a
 possibility to develop a more sophisticated grammar, based on phones
 frequency and alternation rules generally in the language and in the selected
 vocabulary in particular. 

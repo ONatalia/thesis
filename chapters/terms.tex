@@ -49,14 +49,13 @@ Without timing information in such kind of applications it not always possible t
 analyse correctly which object is referenced 
 \parencite {Baumann2016}.  In contrast to Sphinx, online Google, being a black
 box, does not output alignment timing, which makes it impossible to use this 
-recognizer for applications, using non-verbal information and context-dependent
+recognizer for applications, using nonverbal information and context-dependent
 object referencing. 
 
 \section {Alignment Quality Metrics}
 Alignment quality metrics describe how good is the timing of the output,
 produced by the recognizer, compared with the \textit {gold standard}. The main
-metrics that can be used for this purpose are: \textit {mean error}, \textit {standard deviation} and 
-and \textit {root mean squared error}. In this paper we
+metrics that can be used for this purpose are: \textit {mean error}, \textit {standard deviation} and \textit {root mean squared error}. In this paper we
 differentiate between incremental and non-incremental approach to the
 calculation of the errors.  For non-incremental approach only the
 final timing result of the recognizer are compared with the \textit {gold
@@ -147,6 +146,10 @@ all the words in the utterance:
 ms
 \end{equation}
 
+Alternatively, it is also possible to compute \textit {mean, standard deviation
+and RMSE} only for the first incremental result for all the words from the final
+output. This approach also shows how far the first incremental
+results are in their alignment quality from the more stable results. 
 
 \subsection {Root Mean Squared Error}
 \textit {Root mean squared error} (RMSE) is the square root of  \textit {mean
@@ -189,8 +192,8 @@ case (forced alignment mode) takes plays a half of the slot earlier than in the 
 recognition) and before the word \textit {ich} ends in the audio. 
 
 Metrics that are used in this thesis for the timeliness quality evaluation are:
-mean, standard deviation and median. For the above example (see figure \ref
-{fig:sphinxfa} ) mean is computed as shown below:
+\textit {mean, standard deviation and median}. For the above example (see figure
+\ref {fig:sphinxfa} ) \textit {mean} is computed as shown below:
 \begin{equation} \mu (FO)=\frac{((-50) +0 +(-50)+(-300)+ 50+50+0+0)}{8} \approx
 -37,5 ms
 \label{eq:mean_comp_inc}
@@ -205,7 +208,8 @@ For standard deviation we have:
 \ldots\sqrt {\frac{+156,25+156,25+1406,25+1406,25}{8}}\approx 34ms\\
 \end{aligned}
 \end{equation}
-Median, which is the ``middle'' value of the data set,  equals 0. For FD the quality metrics are calculated analogue. 
+\textit {Median}, which is the ``middle'' value of the data set,  equals 0. For
+FD the quality metrics are calculated analogue.
  
 
 
